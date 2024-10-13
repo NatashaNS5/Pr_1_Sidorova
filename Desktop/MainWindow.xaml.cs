@@ -38,6 +38,23 @@ namespace Desktop
         {
 
         }
+        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            UpdateWatermark();
+        }
+
+        private void UpdateWatermark()
+        {
+            watermark.Visibility = string.IsNullOrWhiteSpace(textBox.Text) ? Visibility.Visible : Visibility.Collapsed;
+        }
+        private void TextBox_TextChanged1(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            UpdateWatermark1();
+        }
+        private void UpdateWatermark1()
+        {
+            watermark1.Visibility = string.IsNullOrWhiteSpace(textBox1.Text) ? Visibility.Visible : Visibility.Collapsed;
+        }
     }
 }
 

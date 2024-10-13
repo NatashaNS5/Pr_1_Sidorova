@@ -19,13 +19,33 @@
         <WrapPanel Margin="120,0,0,0" Orientation="Vertical" VerticalAlignment="Center" Grid.Column="2" Height="516" HorizontalAlignment="Left" Width="327">
             <Label Content="Welcome back" FontSize="30" Margin="0,0,0,60"/>
             <Label Content="Имя пользователя" FontSize="20" Margin="0,-40,0,0"/>
-            <TextBox TextWrapping="Wrap" Text="Введите имя пользователя" Width="326" Opacity="0.4" Height="40" Padding="0,10,0,0" FontFamily="Actor" BorderThickness="0,0,0,1"/>
+            <Grid Margin="0,20,0,0">
+                <TextBox x:Name="textBox" VerticalAlignment="Top" FontSize="14" TextChanged="TextBox_TextChanged" 
+              Height="26" BorderThickness="0,0,0,1" Margin="0,10,0,0"/>
+                <TextBlock x:Name="watermark" Text="Введите имя пользователя" VerticalAlignment="Center" 
+                Foreground="Gray" IsHitTestVisible="False" Margin="5,0,0,0"/>
+            </Grid>
             <Label Content="Ваша почта" FontSize="20" FontFamily="Actor" Padding="5,5,5,3" BorderThickness="0,0,0,1"/>
-            <TextBox TextWrapping="Wrap" Text="exam@yandex" Width="326" Opacity="0.4" Height="40" Padding="0,10,0,0" BorderThickness="0,0,0,1"/>
+            <Grid Margin="0,20,0,0">
+                <TextBox x:Name="textBox1" VerticalAlignment="Top" FontSize="14" TextChanged="TextBox_TextChanged1" 
+             Height="26" BorderThickness="0,0,0,1" Margin="0,10,0,0"/>
+                <TextBlock x:Name="watermark1" Text="exam@yandex" VerticalAlignment="Center" 
+               Foreground="Gray" IsHitTestVisible="False" Margin="5,0,0,0"/>
+            </Grid>
             <Label Content="Пароль" FontSize="20" FontFamily="Actor" Padding="5,5,5,3"/>
-            <TextBox TextWrapping="Wrap" Text="Введите пароль" Width="326" Opacity="0.4" Height="40" Padding="0,10,0,0" BorderThickness="0,0,0,1"/>
+            <Grid Margin="0,20,0,0">
+                <TextBox x:Name="textBox2" VerticalAlignment="Top" FontSize="14" TextChanged="TextBox_TextChanged2" 
+             Height="26" BorderThickness="0,0,0,1" Margin="0,10,0,0"/>
+                <TextBlock x:Name="watermark2" Text="Введите пароль" VerticalAlignment="Center" 
+               Foreground="Gray" IsHitTestVisible="False" Margin="5,0,0,0" Height="16"/>
+            </Grid>
             <Label Content="Повторите пароль" FontSize="20" FontFamily="Actor" Padding="5,5,5,3"/>
-            <TextBox TextWrapping="Wrap" Text="Повторите пароль" Width="326" Opacity="0.4" Height="40" Padding="0,10,0,0" BorderThickness="0,0,0,1"/>
+            <Grid Margin="0,20,0,0">
+                <TextBox x:Name="textBox3" VerticalAlignment="Top" FontSize="14" TextChanged="TextBox_TextChanged3" 
+             Height="26" BorderThickness="0,0,0,1" Margin="0,10,0,0"/>
+                <TextBlock x:Name="watermark3" Text="Повторите пароль" VerticalAlignment="Center" 
+               Foreground="Gray" IsHitTestVisible="False" Margin="5,0,0,0" Height="16"/>
+            </Grid>
             <Button Content="Зарегистрироваться" Width="317" Height="37" BorderBrush="#F96860" Margin="5" Background="#F96860" FontSize="20" Foreground="White">
                 <Button.Resources>
                     <Style TargetType="{x:Type Border}">
@@ -33,7 +53,7 @@
                     </Style>
                 </Button.Resources>
             </Button>
-            <Button Content="Назад" Width="317" Height="37" BorderBrush="#F96860" Background="#F96860" FontSize="20" Foreground="White">
+            <Button Content="Назад" Width="317" Height="37" BorderBrush="#F96860" Background="#F96860" FontSize="20" Foreground="White" Click="Button_Click_1">
                 <Button.Resources>
                     <Style TargetType="{x:Type Border}">
                         <Setter Property="CornerRadius" Value="3,3,10,10"/>
@@ -41,7 +61,6 @@
                 </Button.Resources>
             </Button>
         </WrapPanel>
-        <Button Grid.Column="2" Content="Button" HorizontalAlignment="Left" Margin="97,57,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
