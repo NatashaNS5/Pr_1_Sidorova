@@ -21,7 +21,7 @@
             <Label Content="Имя пользователя" FontSize="20" Margin="0,-40,0,0"/>
             <TextBox TextWrapping="Wrap" Text="Введите имя пользователя" Width="326" Opacity="0.4" Height="40" Padding="0,10,0,0" FontFamily="Actor" BorderThickness="0,0,0,1"/>
             <Label Content="Ваша почта" FontSize="20" FontFamily="Actor" Padding="5,5,5,3" BorderThickness="0,0,0,1"/>
-            <TextBox TextWrapping="Wrap" Text="exam@yandex" Width="326" Opacity="0.4" Height="40" Padding="0,10,0,0"/>
+            <TextBox TextWrapping="Wrap" Text="exam@yandex" Width="326" Opacity="0.4" Height="40" Padding="0,10,0,0" BorderThickness="0,0,0,1"/>
             <Label Content="Пароль" FontSize="20" FontFamily="Actor" Padding="5,5,5,3"/>
             <TextBox TextWrapping="Wrap" Text="Введите пароль" Width="326" Opacity="0.4" Height="40" Padding="0,10,0,0" BorderThickness="0,0,0,1"/>
             <Label Content="Повторите пароль" FontSize="20" FontFamily="Actor" Padding="5,5,5,3"/>
@@ -41,6 +41,7 @@
                 </Button.Resources>
             </Button>
         </WrapPanel>
+        <Button Grid.Column="2" Content="Button" HorizontalAlignment="Left" Margin="97,57,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
