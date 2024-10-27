@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Desktop.Utiles;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,23 +27,6 @@ namespace Desktop
             InitializeComponent();
         }
 
-        public static class InputValidator
-        {
-            // Исправлено: правильное регулярное выражение для проверки email
-            private static readonly string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-
-            public static bool ValidateEmail(string email)
-            {
-                return Regex.IsMatch(email, emailPattern);
-            }
-
-            public static bool ValidatePassword(string password)
-            {
-                // Пароль должен быть не менее 6 символов
-                return password.Length >= 6;
-            }
-        }
-
             private void Button_Click(object sender, RoutedEventArgs e)
         {
             Window1 window1 = new Window1();
@@ -57,13 +41,13 @@ namespace Desktop
             string email = textBox.Text; // Email
             string password = textBox1.Text; // Пароль
 
-            if (!InputValidator.ValidateEmail(email))
+            if (!email.ValidateEmail())
             {
                 MessageBox.Show("Введите корректную почту.");
                 return;
             }
 
-            if (!InputValidator.ValidatePassword(password))
+            if (!password.ValidatePassword())
             {
                 MessageBox.Show("Пароль должен быть не менее 6 символов.");
                 return;
