@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Desktop", "Desktop\Desktop.csproj", "{2FA7F2EE-1A41-4D1A-84D0-1BDBAE3C2B94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Desktop", "Desktop\Desktop.csproj", "{2FA7F2EE-1A41-4D1A-84D0-1BDBAE3C2B94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo.Entities", "Todo.Entities\Todo.Entities.csproj", "{22A9C2E1-2466-435F-8388-DE0E1069A298}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{2FA7F2EE-1A41-4D1A-84D0-1BDBAE3C2B94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FA7F2EE-1A41-4D1A-84D0-1BDBAE3C2B94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FA7F2EE-1A41-4D1A-84D0-1BDBAE3C2B94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22A9C2E1-2466-435F-8388-DE0E1069A298}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22A9C2E1-2466-435F-8388-DE0E1069A298}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22A9C2E1-2466-435F-8388-DE0E1069A298}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22A9C2E1-2466-435F-8388-DE0E1069A298}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

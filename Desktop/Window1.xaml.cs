@@ -1,4 +1,5 @@
-﻿using Desktop.Utiles;
+﻿using Desktop.Repository;
+using Desktop.Utiles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Todo.Entities;
 
 namespace Desktop
 {
@@ -21,6 +23,8 @@ namespace Desktop
     /// </summary>
     public partial class Window1 : Window
     {
+        private UserRepository userRepository = new UserRepository();
+
         public Window1()
         {
             InitializeComponent();
@@ -39,33 +43,36 @@ namespace Desktop
                 MessageBox.Show("Имя пользователя должно быть не менее 3 символов.");
                 return;
             }
-
             if (!email.ValidateEmail())
             {
                 MessageBox.Show("Введите корректную почту.");
                 return;
             }
-
             if (!password.ValidatePassword())
             {
                 MessageBox.Show("Пароль должен быть не менее 6 символов.");
                 return;
             }
-
             if (password != confirmPassword)
             {
                 MessageBox.Show("Пароли не совпадают.");
                 return;
             }
 
-            // Данные корректны
-            MessageBox.Show("Регистрация успешна!");
-            Main_empty main_empty = new Main_empty();
+            // Попытка регистрации пользователя
+            string errorMessage;
+            bool isRegistered = UserRepository.RegisterUser(username, email, password, out errorMessage);
 
-            main_empty.Show();
-
-            this.Close();
+            if (!isRegistered)
+            {
+                MessageBox.Show(errorMessage);
+            }
+            else
+            {
+                MessageBox.Show("Регистрация успешна!");
+            }
         }
+
         private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             watermark.Visibility = string.IsNullOrEmpty(textBox.Text) ? Visibility.Visible : Visibility.Hidden;

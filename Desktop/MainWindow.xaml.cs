@@ -1,4 +1,5 @@
-﻿using Desktop.Utiles;
+﻿using Desktop.Repository;
+using Desktop.Utiles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,15 +53,26 @@ namespace Desktop
                 MessageBox.Show("Пароль должен быть не менее 6 символов.");
                 return;
             }
-            // Данные корректны
-            MessageBox.Show("Вход успешно выполнен!");
+            string errorMessage;
+            bool isRegistered = UserRepository.AuthenticateUser(email, password, out errorMessage);
 
-            Main_empty main_empty = new Main_empty();
+            if (!isRegistered)
+            {
+                MessageBox.Show(errorMessage);
+            }
+            else
+            {
+                // Данные корректны
+                MessageBox.Show("Вход успешно выполнен!");
 
-            main_empty.Show();
+                Main_empty main_empty = new Main_empty();
 
-            this.Close();
+                main_empty.Show();
+
+                this.Close();
+            }
         }
+
         private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
             UpdateWatermark();
