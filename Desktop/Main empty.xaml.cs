@@ -23,5 +23,14 @@ namespace Desktop
         {
             InitializeComponent();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Main main = new Main();
+
+            main.Show();
+
+            this.Close();
+        }
     }
 }

@@ -12,7 +12,7 @@
 " HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,-10,0,0" Height="128" Width="275" Margin="-150,-270,0,0"/>
         <Label Content="Создайте свою первую&#xD;&#xA;задачу!" FontSize="30
 " HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0,-10,0,0" Height="128" Width="343" Margin="-79,-150,0,0"/>
-        <Button Content="Создайте первую задачу!" Width="317" Height="37" BorderBrush="#F96860" Margin="0,100,-10,0" Background="#F96860" FontSize="20" Foreground="White" HorizontalAlignment="Center" Grid.ColumnSpan="2" VerticalAlignment="Center">
+        <Button Content="Создайте первую задачу!" Width="317" Height="37" BorderBrush="#F96860" Margin="0,100,-10,0" Background="#F96860" FontSize="20" Foreground="White" HorizontalAlignment="Center" Grid.ColumnSpan="2" VerticalAlignment="Center" Click="Button_Click">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="4,4,4,4"/>

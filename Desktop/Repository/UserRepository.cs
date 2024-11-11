@@ -10,6 +10,7 @@ namespace Desktop.Repository
     public class UserRepository
     {
         private static List<UserModel> _users = new List<UserModel>();
+        public static UserModel CurrentUser { get; private set; } // Текущее имя пользователя
 
         // Метод для регистрации пользователя
         public static bool RegisterUser(string username, string email, string password, out string errorMessage)
@@ -24,12 +25,16 @@ namespace Desktop.Repository
             }
 
             // Добавление пользователя в список
-            _users.Add(new UserModel
+            var newUser = new UserModel
             {
                 Username = username,
                 Email = email,
                 Password = password
-            });
+            };
+            _users.Add(newUser);
+
+            // Устанавливаем текущего пользователя
+            CurrentUser = newUser;
 
             return true;
         }
@@ -45,6 +50,9 @@ namespace Desktop.Repository
                 errorMessage = "Неверное имя пользователя или пароль.";
                 return false;
             }
+
+            // Устанавливаем текущего пользователя
+            CurrentUser = user;
 
             return true;
         }
