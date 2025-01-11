@@ -10,21 +10,18 @@ namespace Desktop.Repository
     public class UserRepository
     {
         private static List<UserModel> _users = new List<UserModel>();
-        public static UserModel CurrentUser { get; private set; } // Текущее имя пользователя
+        public static UserModel CurrentUser { get; private set; } 
 
-        // Метод для регистрации пользователя
         public static bool RegisterUser(string username, string email, string password, out string errorMessage)
         {
             errorMessage = string.Empty;
 
-            // Проверка уникальности имени пользователя
             if (_users.Any(user => user.Username == username))
             {
                 errorMessage = "Имя пользователя уже занято.";
                 return false;
             }
 
-            // Добавление пользователя в список
             var newUser = new UserModel
             {
                 Username = username,
@@ -33,13 +30,11 @@ namespace Desktop.Repository
             };
             _users.Add(newUser);
 
-            // Устанавливаем текущего пользователя
             CurrentUser = newUser;
 
             return true;
         }
 
-        // Метод для авторизации пользователя
         public static bool AuthenticateUser(string email, string password, out string errorMessage)
         {
             errorMessage = string.Empty;
@@ -51,7 +46,6 @@ namespace Desktop.Repository
                 return false;
             }
 
-            // Устанавливаем текущего пользователя
             CurrentUser = user;
 
             return true;

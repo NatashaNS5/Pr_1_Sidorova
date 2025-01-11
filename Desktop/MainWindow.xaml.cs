@@ -18,9 +18,6 @@ using System.Windows.Shapes;
 
 namespace Desktop
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -39,8 +36,8 @@ namespace Desktop
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            string email = textBox.Text; // Email
-            string password = textBox1.Text; // Пароль
+            string email = textBox.Text; 
+            string password = textBox1.Text;
 
             if (!email.ValidateEmail())
             {
@@ -62,7 +59,6 @@ namespace Desktop
             }
             else
             {
-                // Данные корректны
                 MessageBox.Show("Вход успешно выполнен!");
 
                 Main_empty main_empty = new Main_empty();

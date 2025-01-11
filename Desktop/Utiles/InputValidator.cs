@@ -18,12 +18,10 @@ namespace Desktop.Utiles
 
         public static bool ValidatePassword(this string password)
         {
-            // Пароль должен быть не менее 6 символов
             return password.Length >= 6;
         }
         public static bool ValidateUsername(this string username)
         {
-            // Имя должно быть не менее 3 символов
             return username.Length >= 3;
         }
     }

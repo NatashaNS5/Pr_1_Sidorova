@@ -6,58 +6,81 @@
         xmlns:local="clr-namespace:Desktop"
         mc:Ignorable="d"
         Title="Main" Height="600" Width="800" MinHeight="600" MinWidth="800">
-    
+    <Window.Resources>
+        <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        <Style TargetType="CheckBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal">
+                            <Border x:Name="Circle" Width="16" Height="16" CornerRadius="8" BorderThickness="2" BorderBrush="DarkBlue" Background="Transparent" Margin="0,0,5,0" />
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Circle" Property="Background" Value="Black"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid Width="800" Height="600">
-        <Image Margin="12,12,0,0" Source="/ava.png" HorizontalAlignment="Left" Width="75" Height="75" VerticalAlignment="Top"/>
-        <Label Content="Дом" HorizontalAlignment="Left" Margin="134,64,0,0" VerticalAlignment="Top" FontSize="16" Foreground="#FF4BEF12"/>
-        <Label Content="Работа" HorizontalAlignment="Left" Margin="190,64,0,0" VerticalAlignment="Top" FontSize="16" Foreground="#FFEF6212"/>
-        <Label Content="Учеба" HorizontalAlignment="Left" Margin="266,64,0,0" VerticalAlignment="Top" FontSize="16" Foreground="#FF125DEF"/>
-        <Label Content="Отдых" HorizontalAlignment="Left" Margin="330,64,0,0" VerticalAlignment="Top" FontSize="16" Foreground="#FFAF0AFC"/>
-        <Label Content="Задачи" Margin="22,162,701,0" VerticalAlignment="Top" FontSize="16" Foreground="#FF313131" Height="30"/>
-        <Label Content="История" Margin="22,209,701,0" VerticalAlignment="Top" FontSize="16" Foreground="#FF313131" Height="30"/>
-        <StackPanel HorizontalAlignment="Left" Height="62" Margin="116,50,0,0" VerticalAlignment="Top" Width="301"/>
-        <Border BorderBrush="#000" BorderThickness="1" CornerRadius="1" Margin="494,133,0,0" Height="370" VerticalAlignment="Top" HorizontalAlignment="Left" Width="273">
+        <Image Margin="12,12,0,0" Source="/ava.png" HorizontalAlignment="Left" Width="75" Height="75" VerticalAlignment="Top" />
+        <TextBox Text="{Binding Username}" HorizontalAlignment="Left" Margin="25,108,0,0" VerticalAlignment="Top" Width="94" IsReadOnly="True" BorderBrush="White" FontSize="16" />
+        <Label Content="Задачи" Margin="22,162,701,0" VerticalAlignment="Top" FontSize="16" Foreground="#FF313131" Height="30" MouseDown="ShowAllTasks_Click"/>
+        <Label Content="История" Margin="22,209,701,0" VerticalAlignment="Top" FontSize="16" Foreground="#FF313131" Height="30" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="134,64,0,0">
+            <Label Content="Дом" FontSize="16" Foreground="#FF4BEF12" Margin="0,0,10,0" MouseDown="FilterByCategory_Click" Tag="Дом" />
+            <Label Content="Работа" FontSize="16" Foreground="#FFEF6212" Margin="0,0,10,0" MouseDown="FilterByCategory_Click" Tag="Работа" />
+            <Label Content="Учеба" FontSize="16" Foreground="#FF125DEF" Margin="0,0,10,0" MouseDown="FilterByCategory_Click" Tag="Учеба" />
+            <Label Content="Отдых" FontSize="16" Foreground="#FFAF0AFC" MouseDown="FilterByCategory_Click" Tag="Отдых" />
+        </StackPanel>
+
+        <ScrollViewer HorizontalAlignment="Left" Height="370" Margin="134,133,0,0" VerticalAlignment="Top" Width="320">
+            <ListBox ItemsSource="{Binding FilteredTaskList}" SelectedItem="{Binding SelectedTask}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="5">
+                            <CheckBox IsChecked="{Binding IsCompleted}" Margin="0,0,10,0" />
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{Binding Name}" Width="150" />
+                                <TextBlock Text="{Binding Date, StringFormat='{}{0:hh:mm tt}'}" Width="150"  Foreground="Gray" />
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </ScrollViewer>
+        <Border BorderBrush="#000" BorderThickness="1" CornerRadius="1" Margin="469,133,0,0" Height="370" VerticalAlignment="Top" HorizontalAlignment="Left" Width="312" Visibility="{Binding SelectedTask, Converter={StaticResource NullToVisibilityConverter}}">
             <StackPanel Margin="5,7,1,7">
-                <Label Content="Заголовок" Width="128" Height="50" FontSize="24"/>
-                <Button Content="Готово" BorderBrush="#F96860" Margin="5,220,5,5" Background="#F96860" FontSize="20" Foreground="White">
+                <TextBlock Text="{Binding SelectedTask.Name}" FontSize="24" FontWeight="Bold" Margin="0,0,0,10" />
+                <TextBlock Text="{Binding SelectedTask.Date, StringFormat='{}{0:HH:mm, dd MMMM yyyy}'}" FontSize="16" />
+                <TextBlock Text="{Binding SelectedTask.Description, FallbackValue='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}" FontSize="16" TextWrapping="Wrap" Margin="0,10,0,0" />
+                <Button Content="Готово" BorderBrush="#F96860" Margin="5,150,5,5" Background="#F96860" FontSize="20" Foreground="White" Click="CompleteButtonClick">
                     <Button.Resources>
                         <Style TargetType="{x:Type Border}">
                             <Setter Property="CornerRadius" Value="10,10,3,3"/>
                         </Style>
                     </Button.Resources>
                 </Button>
-                <Button Content="Удалить" BorderBrush="#F96860" Margin="5" Background="#F96860" FontSize="20" Foreground="White">
+                <Button Content="Удалить" BorderBrush="#F96860" Margin="5" Background="#F96860" FontSize="20" Foreground="White" Click="DeleteButtonClick">
                     <Button.Resources>
                         <Style TargetType="{x:Type Border}">
                             <Setter Property="CornerRadius" Value="3,3,10,10"/>
                         </Style>
                     </Button.Resources>
                 </Button>
-                <Label Content="18:00" Width="48" Height="28" Margin="-200,-600,0,0" FontSize="16"/>
-                <Label Content="01 Января 2022" Width="126" Height="28" FontSize="16" Margin="-120,-560,0,0"/>
-                <Label Content="Lorem ipsum dolor sit amet,&#xD;&#xA;consectetur adipiscing. " Width="209" Height="53" FontSize="16" Margin="-38,-495,0,0"/>
             </StackPanel>
         </Border>
-        <TextBox Text="{Binding Username}" HorizontalAlignment="Left" Margin="25,108,0,0" VerticalAlignment="Top" Width="94" IsReadOnly="True" BorderBrush="White" FontSize="16"/>
+
         <Button Content="+" Margin="0,491,728,0" BorderBrush="#F96860" Background="#F96860" FontSize="20" Foreground="White" Width="56" Height="56" VerticalAlignment="Top" HorizontalAlignment="Right">
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
-                    <Setter Property="CornerRadius" Value="30,30,30,30"/>
+                    <Setter Property="CornerRadius" Value="30,30,30,30" />
                 </Style>
             </Button.Resources>
         </Button>
-        <ScrollViewer HorizontalAlignment="Left" Height="370" Margin="134,133,0,0" VerticalAlignment="Top" Width="320">
-            <ItemsControl ItemsSource="{Binding TaskList}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Margin="5">
-                            <CheckBox IsChecked="{Binding IsCompleted}" Margin="5" />
-                            <TextBlock Text="{Binding Title}" VerticalAlignment="Center" Width="150"/>
-                            <TextBlock Text="{Binding DueDate, StringFormat=\{0:dd MMM yyyy\}}" VerticalAlignment="Center" Width="100"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
     </Grid>
 </Window>

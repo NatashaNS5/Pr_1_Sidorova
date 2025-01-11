@@ -14,9 +14,6 @@ using System.Windows.Shapes;
 
 namespace Desktop
 {
-    /// <summary>
-    /// Логика взаимодействия для Main_empty.xaml
-    /// </summary>
     public partial class Main_empty : Window
     {
         public Main_empty()

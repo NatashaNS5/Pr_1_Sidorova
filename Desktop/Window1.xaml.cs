@@ -18,9 +18,6 @@ using Todo.Entities;
 
 namespace Desktop
 {
-    /// <summary>
-    /// Логика взаимодействия для Window1.xaml
-    /// </summary>
     public partial class Window1 : Window
     {
         private UserRepository userRepository = new UserRepository();
@@ -32,12 +29,11 @@ namespace Desktop
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            string username = textBox.Text; // Имя пользователя
-            string email = textBox1.Text; // Email
-            string password = textBox2.Text; // Пароль
-            string confirmPassword = textBox3.Text; // Подтверждение пароля
+            string username = textBox.Text;
+            string email = textBox1.Text;
+            string password = textBox2.Text; 
+            string confirmPassword = textBox3.Text;
 
-            // Валидация данных
             if (!username.ValidateUsername())
             {
                 MessageBox.Show("Имя пользователя должно быть не менее 3 символов.");
@@ -59,7 +55,6 @@ namespace Desktop
                 return;
             }
 
-            // Попытка регистрации пользователя
             string errorMessage;
             bool isRegistered = UserRepository.RegisterUser(username, email, password, out errorMessage);
 
@@ -95,7 +90,6 @@ namespace Desktop
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            // Логика для кнопки "Назад"
             MessageBox.Show("Вернуться назад");
         }
 
