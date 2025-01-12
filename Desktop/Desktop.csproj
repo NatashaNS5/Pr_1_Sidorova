@@ -8,10 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="1.png" />
     <None Remove="ava.png" />
     <None Remove="logo.png" />
-    <None Remove="Oval and +.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,10 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="1.png" />
     <Resource Include="ava.png" />
     <Resource Include="logo.png" />
-    <Resource Include="Oval and +.png" />
   </ItemGroup>
 
 </Project>

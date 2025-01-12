@@ -9,7 +9,11 @@ namespace Desktop.Repository
 {
     public class UserRepository
     {
-        private static List<UserModel> _users = new List<UserModel>();
+        private static List<UserModel> _users = new List<UserModel>()
+        {
+            new UserModel{Username ="Alex", Email = "alex@mail.ru", Password = "alex123"},
+            new UserModel{Username ="Admin", Email = "admin@mail.ru", Password = "qwerty"}
+        };
         public static UserModel CurrentUser { get; private set; } 
 
         public static bool RegisterUser(string username, string email, string password, out string errorMessage)
