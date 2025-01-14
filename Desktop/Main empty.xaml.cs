@@ -23,11 +23,20 @@ namespace Desktop
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Main main = new Main();
+            var addTaskWindow = new AddTaskWindow();
+            if (addTaskWindow.ShowDialog() == true)
+            {
+                var mainWindow = new Main();
 
-            main.Show();
-
-            this.Close();
+                var newTask = addTaskWindow.NewTask;
+                if (newTask != null)
+                {
+                    mainWindow.TaskList.Add(newTask);
+                    mainWindow.FilteredTaskList.Add(newTask);
+                }
+                mainWindow.Show();
+                this.Close();
+            }
         }
     }
 }

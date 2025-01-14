@@ -41,23 +41,30 @@ namespace Desktop
             get => _selectedTask;
             set { _selectedTask = value; OnPropertyChanged(); }
         }
+        public ObservableCollection<TaskItem> CompletedTasks { get; set; } = new ObservableCollection<TaskItem>();
+
+        private void CompleteButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (SelectedTask != null)
+            {
+                CompletedTasks.Add(SelectedTask);
+
+                MessageBox.Show($"Задача \"{SelectedTask.Name}\" выполнена!");
+
+                TaskList.Remove(SelectedTask);
+                FilteredTaskList.Remove(SelectedTask);
+                SelectedTask = null;
+            }
+        }
 
         public Main()
         {
             InitializeComponent();
             DataContext = this;
 
-            TaskList = new ObservableCollection<TaskItem>
-            {
-                new TaskItem("Go fishing with Stephen", new DateTime(2022, 1, 1, 9, 0, 0), "Отдых"),
-                new TaskItem("Go fishing with Stephen", new DateTime(2022, 1, 1, 9, 0, 0), "Отдых"),
-                new TaskItem("Read the book Zlatan", new DateTime(2022, 1, 1, 9, 0, 0), "Учеба"),
-                new TaskItem("Meet according with design team...", new DateTime(2022, 1, 1, 9, 0, 0), "Работа"),
-                new TaskItem("Meet according with design team...", new DateTime(2022, 1, 1, 9, 0, 0), "Работа"),
-                new TaskItem("Meet according with design team...", new DateTime(2022, 1, 1, 9, 0, 0), "Работа"),
-            };
+            TaskList = new ObservableCollection<TaskItem>();
 
-            FilteredTaskList = new ObservableCollection<TaskItem>(TaskList);
+            FilteredTaskList = new ObservableCollection<TaskItem>();
 
             if (UserRepository.CurrentUser != null)
             {
@@ -74,23 +81,18 @@ namespace Desktop
             FilteredTaskList = new ObservableCollection<TaskItem>(TaskList);
         }
 
+        private void OpenHistoryWindow_Click(object sender, RoutedEventArgs e)
+        {
+            Window2 historyWindow = new Window2(CompletedTasks);
+            historyWindow.Show();
+        }
+
         private void FilterByCategory_Click(object sender, RoutedEventArgs e)
         {
             string category = (sender as System.Windows.Controls.Label)?.Tag?.ToString();
             if (!string.IsNullOrEmpty(category))
             {
                 FilteredTaskList = new ObservableCollection<TaskItem>(TaskList.Where(task => task.Category == category));
-            }
-        }
-
-        private void CompleteButtonClick(object sender, RoutedEventArgs e)
-        {
-            if (SelectedTask != null)
-            {
-                MessageBox.Show($"Задача \"{SelectedTask.Name}\" выполнена!");
-                TaskList.Remove(SelectedTask);
-                FilteredTaskList.Remove(SelectedTask);
-                SelectedTask = null;
             }
         }
 
@@ -105,17 +107,32 @@ namespace Desktop
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged; protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-    }
 
+        private void AddTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            var addTaskWindow = new AddTaskWindow();
+            if (addTaskWindow.ShowDialog() == true)
+            {
+                var newTask = addTaskWindow.NewTask;
+                if (newTask != null)
+                {
+                    TaskList.Add(newTask);
+                    FilteredTaskList.Add(newTask);
+                }
+            }
+        }
+    }
     public class TaskItem : INotifyPropertyChanged
     {
         private string _name;
         private DateTime _date;
         private string _category;
+        private string _description;
 
         public string Name
         {
@@ -135,13 +152,20 @@ namespace Desktop
             set { _category = value; OnPropertyChanged(); }
         }
 
+        public string Description
+        {
+            get => _description;
+            set { _description = value; OnPropertyChanged(); }
+        }
+
         public string FormattedDate => Date.ToString("f", new CultureInfo("ru-RU"));
 
-        public TaskItem(string name, DateTime date, string category)
+        public TaskItem(string name, DateTime date, string category, string description = "")
         {
             Name = name;
             Date = date;
             Category = category;
+            Description = description;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -149,19 +173,6 @@ namespace Desktop
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class NullToVisibilityConverter : System.Windows.Data.IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return value == null ? Visibility.Collapsed : Visibility.Visible;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 }
