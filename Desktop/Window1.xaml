@@ -5,44 +5,51 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Desktop"
         mc:Ignorable="d"
-        Title="Registration" Height="600" Width="800" MinHeight="600" MinWidth="800">
+           Title="Registration" Height="600" Width="800" MinHeight="600" MinWidth="800">
     <Grid Width="800">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="79*"/>
             <ColumnDefinition Width="61*"/>
             <ColumnDefinition Width="260*"/>
         </Grid.ColumnDefinitions>
-        <Image HorizontalAlignment="Left" Height="150" Margin="67,-320,0,0" VerticalAlignment="Center" Width="150" Source="/logo.png" Grid.ColumnSpan="2"/>
-        <WrapPanel Margin="120,0,0,0" Orientation="Vertical" VerticalAlignment="Center" Grid.Column="2" Height="516" HorizontalAlignment="Left" Width="327">
-            <Label Content="Welcome back" FontSize="30" Margin="0,0,0,60"/>
-            <Label Content="Имя пользователя" FontSize="20" Margin="0,-40,0,0"/>
-            <Grid Margin="0,20,0,0">
-                <TextBox x:Name="textBox" VerticalAlignment="Top" FontSize="14" TextChanged="TextBox_TextChanged" Height="26" BorderThickness="0,0,0,1" Margin="0,10,0,0"/>
-                <TextBlock x:Name="watermark" Text="Введите имя пользователя" VerticalAlignment="Center" Foreground="Gray" IsHitTestVisible="False" Margin="5,0,0,0"/>
+
+        <Image HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,50,0,0" Width="150" Height="150" Source="/logo.png" Grid.ColumnSpan="2"/>
+
+        <WrapPanel Margin="96,13,96,0" Orientation="Vertical" VerticalAlignment="Top" Grid.Column="2" Width="327" Height="688">
+            <Label Content="Welcome back" Style="{StaticResource HeaderLabelStyle}" HorizontalAlignment="Center" Margin="-120,0,0,60"/>
+            <Label Content="Имя пользователя" Style="{StaticResource LabelStyle}" Margin="0,-50,0,0"/>
+
+            <Grid Style="{StaticResource GridStyle}">
+                <TextBox x:Name="textBox" Style="{StaticResource TextBoxStyle}" TextChanged="TextBox_TextChanged" Margin="0,-35,0,0"/>
+                <TextBlock x:Name="watermark" Style="{StaticResource WatermarkStyle}" Text="Введите имя пользователя" Margin="5,-50,0,0"/>
             </Grid>
-            <Label Content="Ваша почта" FontSize="20" FontFamily="Actor" Padding="5,5,5,3" BorderThickness="0,0,0,1"/>
-            <Grid Margin="0,20,0,0">
-                <TextBox x:Name="textBox1" VerticalAlignment="Top" FontSize="14" TextChanged="TextBox1_TextChanged" Height="26" BorderThickness="0,0,0,1" Margin="0,10,0,0"/>
-                <TextBlock x:Name="watermark1" Text="exam@yandex" VerticalAlignment="Center" Foreground="Gray" IsHitTestVisible="False" Margin="5,0,0,0"/>
+
+            <Label Content="Ваша почта" Style="{StaticResource LabelStyle}" Margin="0,10,0,0"/>
+            <Grid Style="{StaticResource GridStyle}">
+                <TextBox x:Name="textBox1" Style="{StaticResource TextBoxStyle}" TextChanged="TextBox1_TextChanged" Margin="0,-10,0,0"/>
+                <TextBlock x:Name="watermark1" Style="{StaticResource WatermarkStyle}" Text="exam@yandex" Margin="5,-20,0,0"/>
             </Grid>
-            <Label Content="Пароль" FontSize="20" FontFamily="Actor" Padding="5,5,5,3"/>
-            <Grid Margin="0,20,0,0">
-                <TextBox x:Name="textBox2" VerticalAlignment="Top" FontSize="14" TextChanged="TextBox2_TextChanged" Height="26" BorderThickness="0,0,0,1" Margin="0,10,0,0"/>
-                <TextBlock x:Name="watermark2" Text="Введите пароль" VerticalAlignment="Center" Foreground="Gray" IsHitTestVisible="False" Margin="5,0,0,0" Height="16"/>
+
+            <Label Content="Пароль" Style="{StaticResource LabelStyle}" Margin="0,10,0,0"/>
+            <Grid Style="{StaticResource GridStyle}">
+                <TextBox x:Name="textBox2" Style="{StaticResource TextBoxStyle}" TextChanged="TextBox2_TextChanged"/>
+                <TextBlock x:Name="watermark2" Style="{StaticResource WatermarkStyle}" Text="Введите пароль"/>
             </Grid>
-            <Label Content="Повторите пароль" FontSize="20" FontFamily="Actor" Padding="5,5,5,3"/>
-            <Grid Margin="0,20,0,0">
-                <TextBox x:Name="textBox3" VerticalAlignment="Top" FontSize="14" TextChanged="TextBox3_TextChanged" Height="26" BorderThickness="0,0,0,1" Margin="0,10,0,0"/>
-                <TextBlock x:Name="watermark3" Text="Повторите пароль" VerticalAlignment="Center" Foreground="Gray" IsHitTestVisible="False" Margin="5,0,0,0" Height="16"/>
+
+            <Label Content="Повторите пароль" Style="{StaticResource LabelStyle}" Margin="0,10,0,0"/>
+            <Grid Style="{StaticResource GridStyle}">
+                <TextBox x:Name="textBox3" Style="{StaticResource TextBoxStyle}" TextChanged="TextBox3_TextChanged"/>
+                <TextBlock x:Name="watermark3" Style="{StaticResource WatermarkStyle}" Text="Повторите пароль"/>
             </Grid>
-            <Button Content="Зарегистрироваться" Width="317" Height="37" BorderBrush="#F96860" Margin="5" Background="#F96860" FontSize="20" Foreground="White" Click="Button_Click_2">
+
+            <Button Content="Зарегистрироваться" Style="{StaticResource ButtonStyle}" Margin="0,20,0,0" HorizontalAlignment="Stretch" Click="Button_Click_2">
                 <Button.Resources>
                     <Style TargetType="{x:Type Border}">
                         <Setter Property="CornerRadius" Value="10,10,3,3"/>
                     </Style>
                 </Button.Resources>
             </Button>
-            <Button Content="Назад" Width="317" Height="37" BorderBrush="#F96860" Background="#F96860" FontSize="20" Foreground="White" Click="Button_Click_1">
+            <Button Content="Назад" Style="{StaticResource ButtonStyle}" Margin="0,10,0,0" HorizontalAlignment="Stretch" Click="Button_Click_1">
                 <Button.Resources>
                     <Style TargetType="{x:Type Border}">
                         <Setter Property="CornerRadius" Value="3,3,10,10"/>
@@ -52,4 +59,3 @@
         </WrapPanel>
     </Grid>
 </Window>
-

@@ -5,34 +5,62 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Desktop"
         mc:Ignorable="d"
-        Title="Создание задачи" Height="600" Width="800" MinHeight="600" MinWidth="800" WindowStartupLocation="CenterScreen">
-    <Grid Background="#EAEAEA">
-        <Label Content="Создание задачи" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="30" Margin="0,10,0,0" />
-        <StackPanel Margin="20,50,20,20" VerticalAlignment="Top">
-            <Label Content="Название" FontSize="14" />
-            <TextBox Name="NameTextBox" Margin="0,0,0,10" FontSize="14" Padding="10" />
+        Title="Создание задачи" Height="600" Width="800" MinHeight="600" MinWidth="800" WindowStartupLocation="CenterScreen" Background="#FFEAEAEA">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Style="{StaticResource GridStyle}">
+        <Label Content="Создание задачи" Style="{StaticResource HeaderLabelStyle}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,60" />
+        <StackPanel Style="{StaticResource StackPanelStyle}" Margin="20,25,20,28">
+            <Label Content="Название" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center"  VerticalAlignment="Center" Margin="-508,20,0,0" />
+            <TextBox Name="NameTextBox" Style="{StaticResource TextBoxStyle}" HorizontalAlignment="Center" Width="602">
+                <TextBox.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="10"/>
+                    </Style>
+                </TextBox.Resources>
+            </TextBox>
+            <Label Content="Категория" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="-501,20,0,0" />
+            <ComboBox Name="CategoryComboBox" HorizontalAlignment="Center" Width="602">
+                <ComboBoxItem Content="Дом" />
+                <ComboBoxItem Content="Работа" />
+                <ComboBoxItem Content="Учеба" />
+                <ComboBoxItem Content="Отдых" />
+            </ComboBox>
 
-            <Label Content="Категория" FontSize="14" />
-            <TextBox Name="CategoryTextBox" Margin="0,0,0,10" FontSize="14" Padding="10" />
+            <Label Content="Описание" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="-505,20,0,0" />
+            <TextBox Name="DescriptionTextBox" Style="{StaticResource TextBoxStyle}" Height="42" AcceptsReturn="True" Width="602" HorizontalAlignment="Center">
+                <TextBox.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="10"/>
+                    </Style>
+                </TextBox.Resources>
+            </TextBox>
 
-            <Label Content="Описание" FontSize="14" />
-            <TextBox Name="DescriptionTextBox" Margin="0,0,0,10" FontSize="14" Padding="10" Height="80" AcceptsReturn="True" TextWrapping="Wrap" />
-
-            <Label Content="Дата" FontSize="14" />
-            <DatePicker Name="DatePicker" Margin="0,0,0,10" />
-
-            <Label Content="Время" FontSize="14" />
-            <TextBox Name="TimeTextBox" Margin="0,0,0,20" FontSize="14" Padding="10" />
+            <Label Content="Дата" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="-550,20,0,0" />
+            <DatePicker x:Name="DatePicker" Style="{StaticResource DatePickerStyle}" Height="24" HorizontalAlignment="Center" Width="602" />
+            <Label Content="Время" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="-540,20,0,0" />
+            <TextBox Name="TimeTextBox" Style="{StaticResource TextBoxStyle}" HorizontalAlignment="Center" Width="602">
+                <TextBox.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="10"/>
+                    </Style>
+                </TextBox.Resources>
+            </TextBox>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10">
-            <Button Content="Создать" Width="224" Background="#4CAF50" Foreground="White" Click="CreateButton_Click" Margin="10,0,0,0" Height="33">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,-480">
+            <Button Content="Создать" Style="{StaticResource CreateButtonStyle}" Click="CreateButton_Click" HorizontalAlignment="Center" VerticalAlignment="Top" BorderBrush="#FF4BEF12">
                 <Button.Resources>
                     <Style TargetType="{x:Type Border}">
                         <Setter Property="CornerRadius" Value="10,10,10,10"/>
                     </Style>
                 </Button.Resources>
             </Button>
-            <Button Content="Отмена" Width="224" Background="#F44336" Foreground="White" Click="CancelButton_Click" Margin="10,0,0,0" Height="33">
+            <Button Content="Отмена" Style="{StaticResource CancelButtonStyle}" Click="CancelButton_Click" HorizontalAlignment="Center" VerticalAlignment="Top">
                 <Button.Resources>
                     <Style TargetType="{x:Type Border}">
                         <Setter Property="CornerRadius" Value="10,10,10,10"/>

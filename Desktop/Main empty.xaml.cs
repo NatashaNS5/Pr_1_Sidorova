@@ -31,7 +31,7 @@ namespace Desktop
                 var newTask = addTaskWindow.NewTask;
                 if (newTask != null)
                 {
-                    mainWindow.TaskList.Add(newTask);
+                    mainWindow.TaskRepository.AddTask(newTask);
                     mainWindow.FilteredTaskList.Add(newTask);
                 }
                 mainWindow.Show();

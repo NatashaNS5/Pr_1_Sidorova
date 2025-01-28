@@ -14,20 +14,14 @@ namespace Desktop
     public partial class Main : Window, INotifyPropertyChanged
     {
         private string _username;
-        private ObservableCollection<TaskItem> _taskList;
         private ObservableCollection<TaskItem> _filteredTaskList;
         private TaskItem _selectedTask;
+        private TaskRepository _taskRepository;
 
         public string Username
         {
             get => _username;
             set { _username = value; OnPropertyChanged(); }
-        }
-
-        public ObservableCollection<TaskItem> TaskList
-        {
-            get => _taskList;
-            set { _taskList = value; OnPropertyChanged(); }
         }
 
         public ObservableCollection<TaskItem> FilteredTaskList
@@ -41,20 +35,11 @@ namespace Desktop
             get => _selectedTask;
             set { _selectedTask = value; OnPropertyChanged(); }
         }
-        public ObservableCollection<TaskItem> CompletedTasks { get; set; } = new ObservableCollection<TaskItem>();
 
-        private void CompleteButtonClick(object sender, RoutedEventArgs e)
+        public TaskRepository TaskRepository
         {
-            if (SelectedTask != null)
-            {
-                CompletedTasks.Add(SelectedTask);
-
-                MessageBox.Show($"Задача \"{SelectedTask.Name}\" выполнена!");
-
-                TaskList.Remove(SelectedTask);
-                FilteredTaskList.Remove(SelectedTask);
-                SelectedTask = null;
-            }
+            get => _taskRepository;
+            set => _taskRepository = value;
         }
 
         public Main()
@@ -62,8 +47,7 @@ namespace Desktop
             InitializeComponent();
             DataContext = this;
 
-            TaskList = new ObservableCollection<TaskItem>();
-
+            _taskRepository = new TaskRepository();
             FilteredTaskList = new ObservableCollection<TaskItem>();
 
             if (UserRepository.CurrentUser != null)
@@ -76,14 +60,25 @@ namespace Desktop
             }
         }
 
+        private void CompleteButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (SelectedTask != null)
+            {
+                _taskRepository.CompleteTask(SelectedTask);
+                MessageBox.Show($"Задача \"{SelectedTask.Name}\" выполнена!");
+                FilteredTaskList.Remove(SelectedTask);
+                SelectedTask = null;
+            }
+        }
+
         private void ShowAllTasks_Click(object sender, RoutedEventArgs e)
         {
-            FilteredTaskList = new ObservableCollection<TaskItem>(TaskList);
+            FilteredTaskList = _taskRepository.GetAllTasks();
         }
 
         private void OpenHistoryWindow_Click(object sender, RoutedEventArgs e)
         {
-            Window2 historyWindow = new Window2(CompletedTasks);
+            Window2 historyWindow = new Window2(_taskRepository.CompletedTasks);
             historyWindow.Show();
         }
 
@@ -92,7 +87,7 @@ namespace Desktop
             string category = (sender as System.Windows.Controls.Label)?.Tag?.ToString();
             if (!string.IsNullOrEmpty(category))
             {
-                FilteredTaskList = new ObservableCollection<TaskItem>(TaskList.Where(task => task.Category == category));
+                FilteredTaskList = _taskRepository.GetTasksByCategory(category);
             }
         }
 
@@ -101,7 +96,7 @@ namespace Desktop
             if (SelectedTask != null)
             {
                 MessageBox.Show($"Задача \"{SelectedTask.Name}\" удалена!");
-                TaskList.Remove(SelectedTask);
+                _taskRepository.RemoveTask(SelectedTask);
                 FilteredTaskList.Remove(SelectedTask);
                 SelectedTask = null;
             }
@@ -121,19 +116,19 @@ namespace Desktop
                 var newTask = addTaskWindow.NewTask;
                 if (newTask != null)
                 {
-                    TaskList.Add(newTask);
+                    _taskRepository.AddTask(newTask);
                     FilteredTaskList.Add(newTask);
                 }
             }
         }
     }
+
     public class TaskItem : INotifyPropertyChanged
     {
         private string _name;
         private DateTime _date;
         private string _category;
         private string _description;
-
         public string Name
         {
             get => _name;

@@ -27,7 +27,8 @@ namespace Desktop
         {
             if (string.IsNullOrWhiteSpace(NameTextBox.Text) ||
                 DatePicker.SelectedDate == null ||
-                string.IsNullOrWhiteSpace(TimeTextBox.Text))
+                string.IsNullOrWhiteSpace(TimeTextBox.Text) ||
+                CategoryComboBox.SelectedItem == null)
             {
                 MessageBox.Show("Пожалуйста, заполните все поля.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -45,7 +46,9 @@ namespace Desktop
 
                 var taskDateTime = new DateTime(date.Year, date.Month, date.Day, time.Hours, time.Minutes, 0);
 
-                NewTask = new TaskItem(NameTextBox.Text, taskDateTime, CategoryTextBox.Text)
+                var selectedCategory = (CategoryComboBox.SelectedItem as ComboBoxItem).Content.ToString();
+
+                NewTask = new TaskItem(NameTextBox.Text, taskDateTime, selectedCategory)
                 {
                     Description = DescriptionTextBox.Text
                 };
@@ -58,6 +61,7 @@ namespace Desktop
                 MessageBox.Show($"Ошибка при создании задачи: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
