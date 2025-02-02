@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -24,6 +25,8 @@ namespace Desktop
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var addTaskWindow = new AddTaskWindow();
+            AnimateWindow(addTaskWindow);
+
             if (addTaskWindow.ShowDialog() == true)
             {
                 var mainWindow = new Main();
@@ -34,9 +37,38 @@ namespace Desktop
                     mainWindow.TaskRepository.AddTask(newTask);
                     mainWindow.FilteredTaskList.Add(newTask);
                 }
-                mainWindow.Show();
-                this.Close();
+
+                var storyboard = new Storyboard();
+                var animation = new DoubleAnimation
+                {
+                    From = 1.0,
+                    To = 0.0,
+                    Duration = new Duration(TimeSpan.FromSeconds(1))
+                };
+                Storyboard.SetTarget(animation, this);
+                Storyboard.SetTargetProperty(animation, new PropertyPath(Window.OpacityProperty));
+                storyboard.Children.Add(animation);
+
+                storyboard.Completed += (s, args) =>
+                {
+                    mainWindow.Show();
+                    this.Close();
+                };
+                storyboard.Begin();
             }
+        }
+
+        private void AnimateWindow(Window window)
+        {
+            var animation = new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = new Duration(TimeSpan.FromSeconds(0.5))
+            };
+
+            window.Opacity = 0;
+            window.BeginAnimation(Window.OpacityProperty, animation);
         }
     }
 }

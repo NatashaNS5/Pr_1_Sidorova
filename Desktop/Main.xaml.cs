@@ -5,9 +5,11 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 
 namespace Desktop
 {
@@ -46,7 +48,7 @@ namespace Desktop
         {
             InitializeComponent();
             DataContext = this;
-
+            this.Loaded += (s, e) => OpenWithFadeIn();
             _taskRepository = new TaskRepository();
             FilteredTaskList = new ObservableCollection<TaskItem>();
 
@@ -58,6 +60,17 @@ namespace Desktop
             {
                 Username = "Username";
             }
+        }
+        private void OpenWithFadeIn()
+        {
+            var fadeInAnimation = new DoubleAnimation
+            {
+                From = 0.0,
+                To = 1.0,
+                Duration = TimeSpan.FromSeconds(0.5)
+            };
+
+            this.BeginAnimation(UIElement.OpacityProperty, fadeInAnimation);
         }
 
         private void CompleteButtonClick(object sender, RoutedEventArgs e)
@@ -78,8 +91,24 @@ namespace Desktop
 
         private void OpenHistoryWindow_Click(object sender, RoutedEventArgs e)
         {
+            CloseWithFadeOut();
             Window2 historyWindow = new Window2(_taskRepository.CompletedTasks);
             historyWindow.Show();
+        }
+        private async void CloseWithFadeOut()
+        {
+            var fadeOutAnimation = new DoubleAnimation
+            {
+                From = 1.0,
+                To = 0.0,
+                Duration = TimeSpan.FromSeconds(0.5),
+                FillBehavior = FillBehavior.Stop
+            };
+
+            fadeOutAnimation.Completed += (s, e) => this.Close();
+            this.BeginAnimation(UIElement.OpacityProperty, fadeOutAnimation);
+
+            await Task.Delay(500);
         }
 
         private void FilterByCategory_Click(object sender, RoutedEventArgs e)
@@ -90,7 +119,6 @@ namespace Desktop
                 FilteredTaskList = _taskRepository.GetTasksByCategory(category);
             }
         }
-
         private void DeleteButtonClick(object sender, RoutedEventArgs e)
         {
             if (SelectedTask != null)
@@ -111,6 +139,8 @@ namespace Desktop
         private void AddTaskButton_Click(object sender, RoutedEventArgs e)
         {
             var addTaskWindow = new AddTaskWindow();
+            AnimateWindow(addTaskWindow);
+
             if (addTaskWindow.ShowDialog() == true)
             {
                 var newTask = addTaskWindow.NewTask;
@@ -121,6 +151,19 @@ namespace Desktop
                 }
             }
         }
+
+        private void AnimateWindow(Window window)
+        {
+            var animation = new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = new Duration(TimeSpan.FromSeconds(0.5))
+            };
+
+            window.Opacity = 0;
+            window.BeginAnimation(Window.OpacityProperty, animation);
+        }
     }
 
     public class TaskItem : INotifyPropertyChanged
@@ -129,6 +172,7 @@ namespace Desktop
         private DateTime _date;
         private string _category;
         private string _description;
+
         public string Name
         {
             get => _name;

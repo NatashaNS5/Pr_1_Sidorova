@@ -12,6 +12,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Todo.Entities;
@@ -95,9 +96,40 @@ namespace Desktop
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            MainWindow mainwindow = new MainWindow();
-            mainwindow.Show();
-            this.Close();
+            TransitionToMainWindow();
+        }
+        private async void TransitionToMainWindow()
+        {
+
+            var fadeOutAnimation = new DoubleAnimation
+            {
+                From = 1.0,
+                To = 0.0,
+                Duration = TimeSpan.FromSeconds(0.5),
+                FillBehavior = FillBehavior.Stop
+            };
+
+            fadeOutAnimation.Completed += (s, e) =>
+            {
+
+                var MainWindow = new MainWindow();
+                MainWindow.Opacity = 0;
+                MainWindow.Show();
+
+                var fadeInAnimation = new DoubleAnimation
+                {
+                    From = 0.0,
+                    To = 1.0,
+                    Duration = TimeSpan.FromSeconds(0.5)
+                };
+
+                MainWindow.BeginAnimation(UIElement.OpacityProperty, fadeInAnimation);
+
+                this.Close();
+            };
+            this.BeginAnimation(UIElement.OpacityProperty, fadeOutAnimation);
+
+            await Task.Delay(500);
         }
     }
 }

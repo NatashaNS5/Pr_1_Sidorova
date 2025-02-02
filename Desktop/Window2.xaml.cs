@@ -13,6 +13,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -38,7 +39,17 @@ namespace Desktop
                 }
             }
         }
+        private void OpenWithFadeIn()
+        {
+            var fadeInAnimation = new DoubleAnimation
+            {
+                From = 0.0,
+                To = 1.0,
+                Duration = TimeSpan.FromSeconds(0.5)
+            };
 
+            this.BeginAnimation(UIElement.OpacityProperty, fadeInAnimation);
+        }
         public ObservableCollection<TaskItem> FilteredTaskList
         {
             get => _filteredTaskList;
@@ -71,7 +82,7 @@ namespace Desktop
             CompletedTasks = completedTasks ?? throw new ArgumentNullException(nameof(completedTasks));
             FilteredTaskList = new ObservableCollection<TaskItem>(CompletedTasks);
             DataContext = this;
-
+            this.Loaded += (s, e) => OpenWithFadeIn();
             Username = UserRepository.CurrentUser?.Username ?? "Default Username";
         }
 

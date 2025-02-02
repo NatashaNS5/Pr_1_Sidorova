@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -64,8 +65,22 @@ namespace Desktop
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = false;
-            Close();
+            CloseWithFadeOut();
+        }
+        private async void CloseWithFadeOut()
+        {
+            var fadeOutAnimation = new DoubleAnimation
+            {
+                From = 1.0,
+                To = 0.0,
+                Duration = TimeSpan.FromSeconds(0.5),
+                FillBehavior = FillBehavior.Stop
+            };
+
+            fadeOutAnimation.Completed += (s, e) => this.Close();
+            this.BeginAnimation(UIElement.OpacityProperty, fadeOutAnimation);
+
+            await Task.Delay(500);
         }
     }
 }

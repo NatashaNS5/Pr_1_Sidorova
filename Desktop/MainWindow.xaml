@@ -32,14 +32,14 @@
             </Grid>
 
             <Label Content="Восстановить пароль" HorizontalAlignment="Right" Style="{StaticResource LabelStyle}" />
-            <Button Content="Войти" Click="Button_Click_1" Style="{StaticResource ButtonStyle}">
+            <Button x:Name="button1" Content="Войти" Click="Button_Click_1" Style="{StaticResource ButtonStyle}">
                 <Button.Resources>
                     <Style TargetType="{x:Type Border}">
                         <Setter Property="CornerRadius" Value="10,10,3,3"/>
                     </Style>
                 </Button.Resources>
             </Button>
-            <Button Content="Регистрация" Click="Button_Click" Style="{StaticResource ButtonStyle}">
+            <Button x:Name="button2" Content="Регистрация" Click="Button_Click" Style="{StaticResource ButtonStyle}">
                 <Button.Resources>
                     <Style TargetType="{x:Type Border}">
                         <Setter Property="CornerRadius" Value="3,3,10,10"/>
