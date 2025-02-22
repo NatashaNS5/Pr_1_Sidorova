@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,16 +13,19 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Todo.Entities;
 
-namespace Desktop
+namespace Desktop.View
 {
-    public partial class Window1 : Window
+    /// <summary>
+    /// Логика взаимодействия для Page1.xaml
+    /// </summary>
+    public partial class Page1 : Page
     {
         private UserRepository userRepository = new UserRepository();
 
-        public Window1()
+        public Page1()
         {
             InitializeComponent();
         }
@@ -32,7 +34,7 @@ namespace Desktop
         {
             string username = textBox.Text;
             string email = textBox1.Text;
-            string password = textBox2.Text; 
+            string password = textBox2.Text;
             string confirmPassword = textBox3.Text;
 
             if (!username.ValidateUsername())
@@ -69,22 +71,22 @@ namespace Desktop
             }
         }
 
-        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             watermark.Visibility = string.IsNullOrEmpty(textBox.Text) ? Visibility.Visible : Visibility.Hidden;
         }
 
-        private void TextBox1_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void TextBox1_TextChanged(object sender, TextChangedEventArgs e)
         {
             watermark1.Visibility = string.IsNullOrEmpty(textBox1.Text) ? Visibility.Visible : Visibility.Hidden;
         }
 
-        private void TextBox2_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void TextBox2_TextChanged(object sender, TextChangedEventArgs e)
         {
             watermark2.Visibility = string.IsNullOrEmpty(textBox2.Text) ? Visibility.Visible : Visibility.Hidden;
         }
 
-        private void TextBox3_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void TextBox3_TextChanged(object sender, TextChangedEventArgs e)
         {
             watermark3.Visibility = string.IsNullOrEmpty(textBox3.Text) ? Visibility.Visible : Visibility.Hidden;
         }
@@ -98,9 +100,9 @@ namespace Desktop
         {
             TransitionToMainWindow();
         }
-        private async void TransitionToMainWindow()
-        {
 
+        private void TransitionToMainWindow()
+        {
             var fadeOutAnimation = new DoubleAnimation
             {
                 From = 1.0,
@@ -111,25 +113,13 @@ namespace Desktop
 
             fadeOutAnimation.Completed += (s, e) =>
             {
+                var mainWindow = new MainWindow();
+                mainWindow.Show();
 
-                var MainWindow = new MainWindow();
-                MainWindow.Opacity = 0;
-                MainWindow.Show();
-
-                var fadeInAnimation = new DoubleAnimation
-                {
-                    From = 0.0,
-                    To = 1.0,
-                    Duration = TimeSpan.FromSeconds(0.5)
-                };
-
-                MainWindow.BeginAnimation(UIElement.OpacityProperty, fadeInAnimation);
-
-                this.Close();
+                Window.GetWindow(this)?.Close();
             };
-            this.BeginAnimation(UIElement.OpacityProperty, fadeOutAnimation);
 
-            await Task.Delay(500);
+            this.BeginAnimation(UIElement.OpacityProperty, fadeOutAnimation);
         }
     }
 }

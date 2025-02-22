@@ -98,6 +98,7 @@
     <Style x:Key="BorderStyle" TargetType="Border">
         <Setter Property="BorderBrush" Value="Black"/>
     </Style>
+
     <!-- Стили для CheckBox -->
     <Style TargetType="CheckBox">
         <Setter Property="Template">

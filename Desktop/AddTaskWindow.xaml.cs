@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Desktop.View;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,9 @@ using System.Windows.Shapes;
 
 namespace Desktop
 {
+    /// <summary>
+    /// Логика взаимодействия для AddTaskWindow.xaml
+    /// </summary>
     public partial class AddTaskWindow : Window
     {
         public TaskItem NewTask { get; private set; }

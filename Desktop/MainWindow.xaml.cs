@@ -1,5 +1,6 @@
 ﻿using Desktop.Repository;
 using Desktop.Utiles;
+using Desktop.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,7 @@ namespace Desktop
 
             this.BeginAnimation(UIElement.OpacityProperty, fadeInAnimation);
         }
+
         private void InitializeButtonAnimations()
         {
             Button button1 = this.FindName("button1") as Button;
@@ -65,18 +67,17 @@ namespace Desktop
                 EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
             };
 
-            var transform = new System.Windows.Media.ScaleTransform();
+            var transform = new ScaleTransform();
             button.RenderTransform = transform;
-            button.RenderTransformOrigin = new System.Windows.Point(0.5, 0.5);
+            button.RenderTransformOrigin = new Point(0.5, 0.5);
 
-            transform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleXProperty, scaleAnimation);
-            transform.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleYProperty, scaleAnimation);
+            transform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleAnimation);
+            transform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnimation);
         }
-
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            TransitionToWindow1();
+            TransitionToPage1();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -106,11 +107,11 @@ namespace Desktop
             else
             {
                 MessageBox.Show("Вход успешно выполнен!");
-                TransitionToMain_empty();
+                TransitionToPage2();
             }
         }
 
-        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateWatermark();
         }
@@ -120,16 +121,17 @@ namespace Desktop
             watermark.Visibility = string.IsNullOrWhiteSpace(textBox.Text) ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private void TextBox_TextChanged1(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void TextBox_TextChanged1(object sender, TextChangedEventArgs e)
         {
             UpdateWatermark1();
         }
+
         private void UpdateWatermark1()
         {
             watermark1.Visibility = string.IsNullOrWhiteSpace(textBox1.Text) ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private async void TransitionToWindow1()
+        private void TransitionToPage1()
         {
             var fadeOutAnimation = new DoubleAnimation
             {
@@ -141,28 +143,17 @@ namespace Desktop
 
             fadeOutAnimation.Completed += (s, e) =>
             {
-                var Window1 = new Window1();
-                Window1.Opacity = 0;
-                Window1.Show();
-
-                var fadeInAnimation = new DoubleAnimation
+                var mainFrame = this.FindName("MainFrame") as Frame;
+                if (mainFrame != null)
                 {
-                    From = 0.0,
-                    To = 1.0,
-                    Duration = TimeSpan.FromSeconds(0.5)
-                };
-
-                Window1.BeginAnimation(UIElement.OpacityProperty, fadeInAnimation);
-
-                this.Close();
+                    mainFrame.Navigate(new Page1());
+                }
             };
 
             this.BeginAnimation(UIElement.OpacityProperty, fadeOutAnimation);
-
-            await Task.Delay(500);
         }
 
-        private async void TransitionToMain_empty()
+        private void TransitionToPage2()
         {
             var fadeOutAnimation = new DoubleAnimation
             {
@@ -174,25 +165,14 @@ namespace Desktop
 
             fadeOutAnimation.Completed += (s, e) =>
             {
-                var Main_empty = new Main_empty();
-                Main_empty.Opacity = 0;
-                Main_empty.Show();
-
-                var fadeInAnimation = new DoubleAnimation
+                var mainFrame = this.FindName("MainFrame") as Frame;
+                if (mainFrame != null)
                 {
-                    From = 0.0,
-                    To = 1.0,
-                    Duration = TimeSpan.FromSeconds(0.5)
-                };
-
-                Main_empty.BeginAnimation(UIElement.OpacityProperty, fadeInAnimation);
-
-                this.Close();
+                    mainFrame.Navigate(new Page2());
+                }
             };
 
             this.BeginAnimation(UIElement.OpacityProperty, fadeOutAnimation);
-
-            await Task.Delay(500);
         }
     }
 }

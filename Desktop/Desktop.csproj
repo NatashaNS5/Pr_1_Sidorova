@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="ava.png" />
-    <Resource Include="logo.png" />
+    <Resource Include="Images\ava.png" />
+    <Resource Include="Images\logo.png" />
   </ItemGroup>
 
 </Project>
