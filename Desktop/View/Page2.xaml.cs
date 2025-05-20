@@ -85,6 +85,24 @@ namespace Desktop.View
         private void UpdateCategoryLabels()
         {
             CategoryStackPanel.Children.Clear();
+
+            // Если категорий 2 или больше, добавляем метку "Все"
+            if (_taskRepository.CategoryColors.Count >= 2)
+            {
+                var allLabel = new Label
+                {
+                    Content = "Все",
+                    Style = (Style)FindResource("LabelStyle"),
+                    Foreground = Brushes.Black, // Цвет для "Все"
+                    Margin = new Thickness(0, 0, 10, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Height = 30
+                };
+                allLabel.MouseDown += ShowAllTasks_Click;
+                CategoryStackPanel.Children.Add(allLabel);
+            }
+
+            // Добавляем метки для всех категорий
             foreach (var category in _taskRepository.CategoryColors)
             {
                 var label = new Label
@@ -257,7 +275,7 @@ namespace Desktop.View
                 _taskRepository.RemoveTask(SelectedTask);
                 FilteredTaskList.Remove(SelectedTask);
                 SelectedTask = null;
-                UpdateCategoryLabels(); 
+                UpdateCategoryLabels();
             }
         }
 
