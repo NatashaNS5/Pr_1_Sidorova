@@ -33,27 +33,25 @@ namespace Desktop
             if (string.IsNullOrWhiteSpace(NameTextBox.Text) ||
                 DatePicker.SelectedDate == null ||
                 string.IsNullOrWhiteSpace(TimeTextBox.Text) ||
-                CategoryComboBox.SelectedItem == null)
+                string.IsNullOrWhiteSpace(CategoryTextBox.Text))
             {
-                MessageBox.Show("Пожалуйста, заполните все поля.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Заполните все поля.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             try
             {
                 var date = DatePicker.SelectedDate.Value;
-
                 if (!TimeSpan.TryParse(TimeTextBox.Text, out var time))
                 {
-                    MessageBox.Show("Введите корректное время в формате HH:mm.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Введите время в формате ЧЧ:ММ.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
                 var taskDateTime = new DateTime(date.Year, date.Month, date.Day, time.Hours, time.Minutes, 0);
+                var category = CategoryTextBox.Text.Trim();
 
-                var selectedCategory = (CategoryComboBox.SelectedItem as ComboBoxItem).Content.ToString();
-
-                NewTask = new TaskItem(NameTextBox.Text, taskDateTime, selectedCategory)
+                NewTask = new TaskItem(NameTextBox.Text, taskDateTime, category)
                 {
                     Description = DescriptionTextBox.Text
                 };
@@ -63,7 +61,7 @@ namespace Desktop
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при создании задачи: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -71,6 +69,7 @@ namespace Desktop
         {
             CloseWithFadeOut();
         }
+
         private async void CloseWithFadeOut()
         {
             var fadeOutAnimation = new DoubleAnimation
@@ -81,9 +80,8 @@ namespace Desktop
                 FillBehavior = FillBehavior.Stop
             };
 
-            fadeOutAnimation.Completed += (s, e) => this.Close();
-            this.BeginAnimation(UIElement.OpacityProperty, fadeOutAnimation);
-
+            fadeOutAnimation.Completed += (s, e) => Close();
+            BeginAnimation(UIElement.OpacityProperty, fadeOutAnimation);
             await Task.Delay(500);
         }
     }

@@ -26,7 +26,8 @@
             </Grid.RenderTransform>
             <Image Source="/Images/ava.png" Style="{StaticResource AvaStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="-650,-500,0,0" />
             <Label Content="Добро пожаловать!" Style="{StaticResource HeaderLabelStyle}" Margin="-210,-330,53,55" HorizontalAlignment="Center" VerticalAlignment="Center" />
-            <Label Content="Создайте свою первую&#xD;&#xA;задачу!" Style="{StaticResource HeaderLabelStyle}" Margin="-190,-200,30,55" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Label Content="Создайте свою первую
+задачу!" Style="{StaticResource HeaderLabelStyle}" Margin="-190,-200,30,55" HorizontalAlignment="Center" VerticalAlignment="Center" />
             <Button Content="Создайте первую задачу!" Style="{StaticResource ButtonStyle}" Click="CreateFirstTaskButton_Click">
                 <Button.Resources>
                     <Style TargetType="{x:Type Border}">
@@ -45,11 +46,8 @@
             <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Username}" HorizontalAlignment="Left" Margin="25,108,0,0" VerticalAlignment="Top" Width="94" IsReadOnly="True" BorderBrush="White" />
             <Label Style="{StaticResource LabelStyle}" Content="Задачи" Margin="22,162,0,0" VerticalAlignment="Top" MouseDown="ShowAllTasks_Click"/>
             <Label Style="{StaticResource LabelStyle}" Content="История" Margin="22,209,0,0" VerticalAlignment="Top" MouseDown="ShowCompletedTasks_Click"/>
-            <StackPanel Style="{StaticResource StackPanelStyle}" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="134,64,0,0">
-                <Label Style="{StaticResource LabelStyle}" Content="Дом" Foreground="#FF4BEF12" Margin="0,0,10,0" MouseDown="FilterByCategory_Click" Tag="Дом" VerticalAlignment="Center" Height="30" />
-                <Label Style="{StaticResource LabelStyle}" Content="Работа" Foreground="#FFEF6212" Margin="0,0,10,0" MouseDown="FilterByCategory_Click" Tag="Работа" VerticalAlignment="Center" Height="30" />
-                <Label Style="{StaticResource LabelStyle}" Content="Учеба" Foreground="#FF125DEF" Margin="0,0,10,0" MouseDown="FilterByCategory_Click" Tag="Учеба" VerticalAlignment="Center" Height="30" />
-                <Label Style="{StaticResource LabelStyle}" Content="Отдых" Foreground="#FFAF0AFC" MouseDown="FilterByCategory_Click" Tag="Отдых" VerticalAlignment="Center" Height="48" />
+            <StackPanel x:Name="CategoryStackPanel" Style="{StaticResource StackPanelStyle}" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="134,64,0,0">
+                <!-- Категории добавляются динамически в коде -->
             </StackPanel>
             <ScrollViewer HorizontalAlignment="Left" Height="370" Margin="134,133,0,0" VerticalAlignment="Top" Width="320" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <ScrollViewer.Resources>
@@ -58,7 +56,6 @@
                         <Setter Property="BorderBrush" Value="Transparent" />
                         <Setter Property="Opacity" Value="0" />
                     </Style>
-
                     <Style TargetType="ListBoxItem">
                         <Setter Property="Template">
                             <Setter.Value>
@@ -79,7 +76,6 @@
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter TargetName="Border" Property="Background" Value="#EEEDFF" />
                                         </Trigger>
-
                                         <MultiDataTrigger>
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Binding IsCompleted}" Value="True" />
@@ -87,7 +83,6 @@
                                             </MultiDataTrigger.Conditions>
                                             <Setter TargetName="Border" Property="Background" Value="#E7FFED" />
                                         </MultiDataTrigger>
-
                                         <DataTrigger Binding="{Binding IsCompleted}" Value="True">
                                             <Setter TargetName="CheckBox" Property="Style" Value="{StaticResource CompletedCheckBoxStyle}" />
                                             <Setter TargetName="NameTextBlock" Property="TextDecorations" Value="Strikethrough" />
@@ -101,7 +96,6 @@
                         </Setter>
                     </Style>
                 </ScrollViewer.Resources>
-
                 <ListBox Style="{StaticResource ListBoxStyle}" ItemsSource="{Binding FilteredTaskList}" SelectedItem="{Binding SelectedTask}" BorderBrush="Transparent">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -138,7 +132,6 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
             </ScrollViewer>
-
             <Border Style="{StaticResource BorderStyle}" BorderBrush="#000" BorderThickness="1" CornerRadius="1" Margin="469,133,0,0" Height="370" VerticalAlignment="Top" HorizontalAlignment="Left" Width="288" Visibility="{Binding SelectedTask, Converter={StaticResource NullToVisibilityConverter}}">
                 <StackPanel Margin="5,7,1,7">
                     <TextBlock Text="{Binding SelectedTask.Name}" FontSize="24" FontWeight="Bold" Margin="0,0,0,10" />
@@ -160,7 +153,6 @@
                     </Button>
                 </StackPanel>
             </Border>
-
             <Button Style="{StaticResource ButtonStyle}" Content="+" Margin="0,480,718,0" BorderBrush="#F96860" Background="#F96860" FontSize="20" Foreground="White" Width="56" Height="56" VerticalAlignment="Top" HorizontalAlignment="Right" Click="AddTaskButton_Click">
                 <Button.Resources>
                     <Style TargetType="{x:Type Border}">

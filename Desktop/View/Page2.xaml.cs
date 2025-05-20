@@ -66,7 +66,7 @@ namespace Desktop.View
         {
             InitializeComponent();
             DataContext = this;
-            this.Loaded += (s, e) => OpenWithFadeIn();
+            Loaded += (s, e) => OpenWithFadeIn();
             _taskRepository = new TaskRepository();
             FilteredTaskList = new ObservableCollection<TaskItem>();
 
@@ -78,6 +78,28 @@ namespace Desktop.View
             {
                 Username = "Username";
             }
+
+            UpdateCategoryLabels();
+        }
+
+        private void UpdateCategoryLabels()
+        {
+            CategoryStackPanel.Children.Clear();
+            foreach (var category in _taskRepository.CategoryColors)
+            {
+                var label = new Label
+                {
+                    Content = category.Key,
+                    Style = (Style)FindResource("LabelStyle"),
+                    Foreground = category.Value,
+                    Margin = new Thickness(0, 0, 10, 0),
+                    Tag = category.Key,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Height = 30
+                };
+                label.MouseDown += FilterByCategory_Click;
+                CategoryStackPanel.Children.Add(label);
+            }
         }
 
         private void OpenWithFadeIn()
@@ -88,8 +110,7 @@ namespace Desktop.View
                 To = 1.0,
                 Duration = TimeSpan.FromSeconds(0.5)
             };
-
-            this.BeginAnimation(UIElement.OpacityProperty, fadeInAnimation);
+            BeginAnimation(UIElement.OpacityProperty, fadeInAnimation);
         }
 
         private void CreateFirstTaskButton_Click(object sender, RoutedEventArgs e)
@@ -104,6 +125,7 @@ namespace Desktop.View
                 {
                     _taskRepository.AddTask(newTask);
                     FilteredTaskList.Add(newTask);
+                    UpdateCategoryLabels();
                     ShowMainContent();
                 }
             }
@@ -181,7 +203,6 @@ namespace Desktop.View
                 To = 1,
                 Duration = new Duration(TimeSpan.FromSeconds(0.5))
             };
-
             window.Opacity = 0;
             window.BeginAnimation(UIElement.OpacityProperty, animation);
         }
@@ -236,6 +257,7 @@ namespace Desktop.View
                 _taskRepository.RemoveTask(SelectedTask);
                 FilteredTaskList.Remove(SelectedTask);
                 SelectedTask = null;
+                UpdateCategoryLabels(); 
             }
         }
 
@@ -251,6 +273,7 @@ namespace Desktop.View
                 {
                     _taskRepository.AddTask(newTask);
                     FilteredTaskList.Add(newTask);
+                    UpdateCategoryLabels();
                 }
             }
         }

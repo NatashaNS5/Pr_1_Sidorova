@@ -25,12 +25,13 @@
                 </TextBox.Resources>
             </TextBox>
             <Label Content="Категория" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="-501,20,0,0" />
-            <ComboBox Name="CategoryComboBox" HorizontalAlignment="Center" Width="602">
-                <ComboBoxItem Content="Дом" />
-                <ComboBoxItem Content="Работа" />
-                <ComboBoxItem Content="Учеба" />
-                <ComboBoxItem Content="Отдых" />
-            </ComboBox>
+            <TextBox Name="CategoryTextBox" Style="{StaticResource TextBoxStyle}" HorizontalAlignment="Center" Width="602">
+                <TextBox.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="10"/>
+                    </Style>
+                </TextBox.Resources>
+            </TextBox>
 
             <Label Content="Описание" Style="{StaticResource LabelStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="-505,20,0,0" />
             <TextBox Name="DescriptionTextBox" Style="{StaticResource TextBoxStyle}" Height="42" AcceptsReturn="True" Width="602" HorizontalAlignment="Center">
