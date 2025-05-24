@@ -17,14 +17,17 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static Desktop.data.Repository;
 
 namespace Desktop
 {
     public partial class MainWindow : Window
     {
+        private readonly AuthRepository _authRepository;
         public MainWindow()
         {
             InitializeComponent();
+            _authRepository = new AuthRepository();
             OpenWithFadeIn();
             InitializeButtonAnimations();
         }
@@ -80,36 +83,31 @@ namespace Desktop
             TransitionToPage1();
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            string email = textBox.Text;
-            string password = textBox1.Text;
-
-            if (!email.ValidateEmail())
+            try
             {
-                MessageBox.Show("Введите корректную почту.");
-                return;
+                string email = textBox.Text;
+                string password = textBox1.Text;
+
+                var (success, errorMessage) = await _authRepository.AuthenticateUserAsync(email, password);
+
+                if (!success)
+                {
+                    MessageBox.Show(errorMessage);
+                }
+                else
+                {
+                    MessageBox.Show("Вход успешно выполнен!");
+                    TransitionToPage2();
+                }
             }
-
-            if (!password.ValidatePassword())
+            catch (Exception ex)
             {
-                MessageBox.Show("Пароль должен быть не менее 6 символов.");
-                return;
-            }
-
-            string errorMessage;
-            bool isRegistered = UserRepository.AuthenticateUser(email, password, out errorMessage);
-
-            if (!isRegistered)
-            {
-                MessageBox.Show(errorMessage);
-            }
-            else
-            {
-                MessageBox.Show("Вход успешно выполнен!");
-                TransitionToPage2();
+                MessageBox.Show($"Произошла ошибка: {ex.Message}");
             }
         }
+
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {

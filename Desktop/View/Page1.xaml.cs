@@ -3,6 +3,7 @@ using Desktop.Utiles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +16,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static Desktop.data.Repository;
 
 namespace Desktop.View
 {
@@ -23,14 +25,14 @@ namespace Desktop.View
     /// </summary>
     public partial class Page1 : Page
     {
-        private UserRepository userRepository = new UserRepository();
-
+        private readonly AuthRepository _authRepository;
         public Page1()
         {
             InitializeComponent();
+            _authRepository = new AuthRepository();
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private async void Button_Click_2(object sender, RoutedEventArgs e)
         {
             string username = textBox.Text;
             string email = textBox1.Text;
@@ -58,18 +60,42 @@ namespace Desktop.View
                 return;
             }
 
-            string errorMessage;
-            bool isRegistered = UserRepository.RegisterUser(username, email, password, out errorMessage);
+            if (!await IsServerAvailable())
+            {
+                MessageBox.Show("Сервер недоступен. Пожалуйста, попробуйте позже.");
+                return;
+            }
 
-            if (!isRegistered)
+            var (success, errorMessage) = await _authRepository.RegisterUserAsync(username, email, password);
+
+            if (!success)
             {
                 MessageBox.Show(errorMessage);
             }
             else
             {
                 MessageBox.Show("Регистрация успешна!");
+                TransitionToMainWindow();
             }
         }
+
+
+        private async Task<bool> IsServerAvailable()
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var response = await client.GetAsync("http://45.144.64.179/api/health");
+                    return response.IsSuccessStatusCode;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
