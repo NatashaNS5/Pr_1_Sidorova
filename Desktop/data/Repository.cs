@@ -67,7 +67,7 @@ namespace Desktop.data
                     {
                         var responseContent = await response.Content.ReadAsAsync<Response<Token>>();
                         TokenStorage.Value = responseContent.Data.AccessToken;
-                        TokenStorage.Username = email; // Сохраняем email как имя пользователя
+                        TokenStorage.Username = email;
                         Console.WriteLine($"Токен сохранен: {TokenStorage.Value}");
 
                         return (true, null);
