@@ -18,6 +18,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace Desktop.View
 {
@@ -31,6 +32,8 @@ namespace Desktop.View
         private TaskItem _selectedTask;
         private TaskRepository _taskRepository;
         private bool _isShowingCompletedTasks;
+        private bool _isMenuVisible;
+        private Window _parentWindow; 
 
         public string Username
         {
@@ -62,21 +65,26 @@ namespace Desktop.View
             set { _isShowingCompletedTasks = value; OnPropertyChanged(); }
         }
 
-        public Page2()
+        public Page2(Window parentWindow = null)
         {
             InitializeComponent();
             DataContext = this;
             Loaded += (s, e) => OpenWithFadeIn();
             _taskRepository = new TaskRepository();
             FilteredTaskList = new ObservableCollection<TaskItem>();
+            _isMenuVisible = false;
+            _parentWindow = parentWindow; 
 
+            System.Diagnostics.Debug.WriteLine($"Page2 constructor - UserRepository.CurrentUser: {UserRepository.CurrentUser?.Username ?? "null"}");
             if (UserRepository.CurrentUser != null)
             {
                 Username = UserRepository.CurrentUser.Username;
+                System.Diagnostics.Debug.WriteLine($"Username set to: {Username}");
             }
             else
             {
                 Username = "Username";
+                System.Diagnostics.Debug.WriteLine("No CurrentUser, using default Username: Username");
             }
 
             UpdateCategoryLabels();
@@ -86,14 +94,13 @@ namespace Desktop.View
         {
             CategoryStackPanel.Children.Clear();
 
-            // Если категорий 2 или больше, добавляем метку "Все"
             if (_taskRepository.CategoryColors.Count >= 2)
             {
                 var allLabel = new Label
                 {
                     Content = "Все",
                     Style = (Style)FindResource("LabelStyle"),
-                    Foreground = Brushes.Black, // Цвет для "Все"
+                    Foreground = Brushes.Black,
                     Margin = new Thickness(0, 0, 10, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     Height = 30
@@ -102,7 +109,6 @@ namespace Desktop.View
                 CategoryStackPanel.Children.Add(allLabel);
             }
 
-            // Добавляем метки для всех категорий
             foreach (var category in _taskRepository.CategoryColors)
             {
                 var label = new Label
@@ -293,6 +299,156 @@ namespace Desktop.View
                     FilteredTaskList.Add(newTask);
                     UpdateCategoryLabels();
                 }
+            }
+        }
+
+        private void ProfileImageButtonEmpty_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (!IsMouseOverMenuEmpty())
+            {
+                menuGridEmpty.Visibility = Visibility.Visible;
+                _isMenuVisible = true;
+            }
+        }
+
+        private void ProfileImageButtonEmpty_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (!IsMouseOverMenuEmpty() && e.OriginalSource is not Button)
+            {
+                menuGridEmpty.Visibility = Visibility.Hidden;
+                _isMenuVisible = false;
+            }
+        }
+
+        private void MenuGridEmpty_MouseEnter(object sender, MouseEventArgs e)
+        {
+            _isMenuVisible = true;
+            menuGridEmpty.Visibility = Visibility.Visible;
+        }
+
+        private void MenuGridEmpty_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (!IsMouseOverImageEmpty())
+            {
+                menuGridEmpty.Visibility = Visibility.Hidden;
+                _isMenuVisible = false;
+            }
+        }
+
+        private bool IsMouseOverMenuEmpty()
+        {
+            return menuGridEmpty.IsMouseOver || exitBEmpty.IsMouseOver || profileImageSwitchEmpty.IsMouseOver;
+        }
+
+        private bool IsMouseOverImageEmpty()
+        {
+            return profileImageButtonEmpty.IsMouseOver || ProfileStackPanelEmpty.IsMouseOver;
+        }
+
+        private void ExitBEmpty_Click(object sender, RoutedEventArgs e)
+        {
+            if (_parentWindow != null)
+            {
+                _parentWindow.Close(); 
+            }
+            else
+            {
+                if (Application.Current.MainWindow != null)
+                {
+                    Application.Current.MainWindow.Close();
+                }
+            }
+            var mainWindow = new MainWindow();
+            mainWindow.Show();
+        }
+
+        private void ProfileImageSwitchEmpty_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new()
+            {
+                Filter = "Image Files (*.png;*.jpg)| *.png;*.jpg",
+                Title = "Выберите изображение профиля"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                var bitmap = new BitmapImage(new Uri(openFileDialog.FileName));
+                profileImageButtonEmpty.Source = bitmap;
+            }
+        }
+
+        private void ProfileImageButtonMain_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (!IsMouseOverMenuMain())
+            {
+                menuGridMain.Visibility = Visibility.Visible;
+                _isMenuVisible = true;
+            }
+        }
+
+        private void ProfileImageButtonMain_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (!IsMouseOverMenuMain() && e.OriginalSource is not Button)
+            {
+                menuGridMain.Visibility = Visibility.Hidden;
+                _isMenuVisible = false;
+            }
+        }
+
+        private void MenuGridMain_MouseEnter(object sender, MouseEventArgs e)
+        {
+            _isMenuVisible = true;
+            menuGridMain.Visibility = Visibility.Visible;
+        }
+
+        private void MenuGridMain_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (!IsMouseOverImageMain())
+            {
+                menuGridMain.Visibility = Visibility.Hidden;
+                _isMenuVisible = false;
+            }
+        }
+
+        private bool IsMouseOverMenuMain()
+        {
+            return menuGridMain.IsMouseOver || exitBMain.IsMouseOver || profileImageSwitchMain.IsMouseOver;
+        }
+
+        private bool IsMouseOverImageMain()
+        {
+            return profileImageButtonMain.IsMouseOver || ProfileStackPanelMain.IsMouseOver;
+        }
+
+        private void ExitBMain_Click(object sender, RoutedEventArgs e)
+        {
+            if (_parentWindow != null)
+            {
+                _parentWindow.Close(); 
+            }
+            else
+            {
+                if (Application.Current.MainWindow != null)
+                {
+                    Application.Current.MainWindow.Close();
+                }
+            }
+            var mainWindow = new MainWindow();
+            mainWindow.Show(); 
+        }
+
+        private void ProfileImageSwitchMain_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new()
+            {
+                Filter = "Image Files (*.png;*.jpg)| *.png;*.jpg",
+                Title = "Выберите изображение профиля"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                var bitmap = new BitmapImage(new Uri(openFileDialog.FileName));
+                profileImageButtonMain.Source = bitmap;
             }
         }
 

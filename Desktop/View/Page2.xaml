@@ -24,7 +24,20 @@
             <Grid.RenderTransform>
                 <ScaleTransform x:Name="EmptyScaleTransform" ScaleX="1" ScaleY="1"/>
             </Grid.RenderTransform>
-            <Image Source="/Images/ava.png" Style="{StaticResource AvaStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="-650,-500,0,0" />
+            <Grid x:Name="ProfileContainerEmpty" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel x:Name="ProfileStackPanelEmpty" Grid.Row="0" Orientation="Vertical">
+                    <Image x:Name="profileImageButtonEmpty" Source="/Images/ava.png" Style="{StaticResource AvaStyle}" MouseEnter="ProfileImageButtonEmpty_MouseEnter" MouseLeave="ProfileImageButtonEmpty_MouseLeave" />
+                    <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Username}" Width="200" IsReadOnly="True" BorderBrush="White" Margin="0,5,0,0" />
+                </StackPanel>
+                <Grid x:Name="menuGridEmpty" Grid.Row="0" Margin="-70,0,0,0" Background="#FFE6E6E6" Height="162" Width="155" Panel.ZIndex="1" Visibility="Hidden" MouseEnter="MenuGridEmpty_MouseEnter" MouseLeave="MenuGridEmpty_MouseLeave">
+                    <Button x:Name="exitBEmpty" Content="Выход" HorizontalAlignment="Left" Margin="25,20,0,0" VerticalAlignment="Top" Width="53" FontSize="17" BorderBrush="{x:Null}" Background="{x:Null}" BorderThickness="0,0,0,0" Click="ExitBEmpty_Click"/>
+                    <Button x:Name="profileImageSwitchEmpty" Content="Изменить&#xD;&#xA;фото&#xD;&#xA;профиля" HorizontalAlignment="Left" Margin="5,60,0,0" VerticalAlignment="Top" Width="120" FontSize="17" BorderBrush="{x:Null}" Background="{x:Null}" BorderThickness="0,0,0,0" Click="ProfileImageSwitchEmpty_Click" />
+                </Grid>
+            </Grid>
             <Label Content="Добро пожаловать!" Style="{StaticResource HeaderLabelStyle}" Margin="-210,-330,53,55" HorizontalAlignment="Center" VerticalAlignment="Center" />
             <Label Content="Создайте свою первую
 задачу!" Style="{StaticResource HeaderLabelStyle}" Margin="-190,-200,30,55" HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -42,8 +55,20 @@
             <Grid.RenderTransform>
                 <ScaleTransform x:Name="MainScaleTransform" ScaleX="0.8" ScaleY="0.8"/>
             </Grid.RenderTransform>
-            <Image Style="{StaticResource AvaStyle}" Source="/Images/ava.png" />
-            <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Username}" HorizontalAlignment="Left" Margin="25,108,0,0" VerticalAlignment="Top" Width="94" IsReadOnly="True" BorderBrush="White" />
+            <Grid x:Name="ProfileContainerMain" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel x:Name="ProfileStackPanelMain" Grid.Row="0" Orientation="Vertical">
+                    <Image x:Name="profileImageButtonMain" Style="{StaticResource AvaStyle}" Source="/Images/ava.png" MouseEnter="ProfileImageButtonMain_MouseEnter" MouseLeave="ProfileImageButtonMain_MouseLeave" />
+                    <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Username}" Width="200" IsReadOnly="True" BorderBrush="White" Margin="0,5,0,0" />
+                </StackPanel>
+                <Grid x:Name="menuGridMain" Grid.Row="0" Margin="-70,0,0,0" Background="#FFE6E6E6" Height="162" Width="155" Panel.ZIndex="1" Visibility="Hidden" MouseEnter="MenuGridMain_MouseEnter" MouseLeave="MenuGridMain_MouseLeave">
+                    <Button x:Name="exitBMain" Content="Выход" HorizontalAlignment="Left" Margin="25,20,0,0" VerticalAlignment="Top" Width="53" FontSize="17" BorderBrush="{x:Null}" Background="{x:Null}" BorderThickness="0,0,0,0" Click="ExitBMain_Click"/>
+                    <Button x:Name="profileImageSwitchMain" Content="Изменить&#xD;&#xA;фото&#xD;&#xA;профиля" HorizontalAlignment="Left" Margin="5,60,0,0" VerticalAlignment="Top" Width="120" FontSize="17" BorderBrush="{x:Null}" Background="{x:Null}" BorderThickness="0,0,0,0" Click="ProfileImageSwitchMain_Click" />
+                </Grid>
+            </Grid>
             <Label Style="{StaticResource LabelStyle}" Content="Задачи" Margin="22,162,0,0" VerticalAlignment="Top" MouseDown="ShowAllTasks_Click"/>
             <Label Style="{StaticResource LabelStyle}" Content="История" Margin="22,209,0,0" VerticalAlignment="Top" MouseDown="ShowCompletedTasks_Click"/>
             <StackPanel x:Name="CategoryStackPanel" Style="{StaticResource StackPanelStyle}" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="134,64,0,0">
