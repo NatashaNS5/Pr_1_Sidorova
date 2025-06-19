@@ -258,16 +258,24 @@ namespace Desktop.View
             window.BeginAnimation(UIElement.OpacityProperty, animation);
         }
 
-        private void CompleteButtonClick(object sender, RoutedEventArgs e)
+        private async void CompleteButtonClick(object sender, RoutedEventArgs e)
         {
             if (SelectedTask != null)
             {
                 SelectedTask.IsCompleted = true;
-                _taskRepository.CompleteTask(SelectedTask);
+                await _taskRepository.CompleteTask(SelectedTask);
                 MessageBox.Show($"Задача \"{SelectedTask.Name}\" выполнена!");
-                FilteredTaskList.Remove(SelectedTask);
+                FilteredTaskList.Remove(SelectedTask); 
                 SelectedTask = null;
                 UpdateMainContentVisibility();
+                if (IsShowingCompletedTasks)
+                {
+                    FilteredTaskList = _taskRepository.CompletedTasks;
+                }
+                else
+                {
+                    FilteredTaskList = _taskRepository.GetAllTasks();
+                }
             }
         }
 
@@ -280,7 +288,7 @@ namespace Desktop.View
         private void ShowCompletedTasks_Click(object sender, RoutedEventArgs e)
         {
             IsShowingCompletedTasks = true;
-            FilteredTaskList = _taskRepository.CompletedTasks;
+            FilteredTaskList = _taskRepository.CompletedTasks; 
         }
 
         private void FilterByCategory_Click(object sender, RoutedEventArgs e)

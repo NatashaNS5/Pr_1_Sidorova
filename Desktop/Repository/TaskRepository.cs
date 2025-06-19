@@ -50,7 +50,7 @@ namespace Desktop.Repository
             try
             {
                 var todos = await _todoApiClient.GetTodosAsync();
-                _taskList.Clear(); 
+                _taskList.Clear();
                 _completedTasks.Clear();
                 foreach (var todo in todos)
                 {
@@ -130,14 +130,28 @@ namespace Desktop.Repository
             }
         }
 
-        public void CompleteTask(TaskItem task)
+        public async Task CompleteTask(TaskItem task)
         {
-            if (_taskList.Contains(task))
+            try
             {
-                _taskList.Remove(task);
-                _completedTasks.Add(task);
+                var todo = (await _todoApiClient.GetTodosAsync()).FirstOrDefault(t => t.Title == task.Name && t.Category == task.Category && t.date == new DateTimeOffset(task.Date).ToUnixTimeMilliseconds());
+                if (todo != null)
+                {
+                    var updatedTodo = await _todoApiClient.UpdateTodoAsync(todo.Id, true);
+                    if (_taskList.Contains(task))
+                    {
+                        _taskList.Remove(task);
+                        task.IsCompleted = true;
+                        _completedTasks.Add(task);
+                        System.Diagnostics.Debug.WriteLine($"Task {task.Name} moved to completed");
+                    }
+                }
             }
-            System.Diagnostics.Debug.WriteLine($"Completed task, CategoryColors count: {_categoryColors.Count}");
+            catch (HttpRequestException ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка отметки выполнения задачи", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Diagnostics.Debug.WriteLine($"CompleteTask error: {ex.Message}");
+            }
         }
 
         public ObservableCollection<TaskItem> GetTasksByCategory(string category)
