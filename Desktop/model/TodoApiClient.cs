@@ -51,5 +51,18 @@ namespace Desktop.model
             var createdTodo = await response.Content.ReadFromJsonAsync<Response<TodoModel>>();
             return createdTodo.Data;
         }
+
+        public async Task DeleteTodoAsync(string id)
+        {
+            var client = GetHttpClient();
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", TokenStorage.Value);
+
+            var response = await client.DeleteAsync($"api/todos/{id}");
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"Ошибка при удалении задачи: {response.StatusCode} - {error}");
+            }
+        }
     }
 }

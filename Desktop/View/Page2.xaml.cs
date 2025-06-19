@@ -93,15 +93,33 @@ namespace Desktop.View
         private async Task InitializePage()
         {
             await _taskRepository.InitializeAsync();
+            UpdateMainContentVisibility();
+            UpdateCategoryLabels();
             OpenWithFadeIn();
             ShowAllTasks_Click(null, null);
+        }
+
+        private void UpdateMainContentVisibility()
+        {
+            bool hasTasks = _taskRepository.TaskList.Any() || _taskRepository.CompletedTasks.Any();
+            MainGrid.Visibility = hasTasks ? Visibility.Visible : Visibility.Collapsed;
+            EmptyGrid.Visibility = hasTasks ? Visibility.Collapsed : Visibility.Visible;
+
+            if (hasTasks)
+            {
+                ShowMainContent();
+            }
+            else
+            {
+                UpdateCategoryLabels();
+            }
         }
 
         private void UpdateCategoryLabels()
         {
             CategoryStackPanel.Children.Clear();
 
-            if (_taskRepository.CategoryColors.Count >= 2)
+            if (_taskRepository.CategoryColors.Count > 0)
             {
                 var allLabel = new Label
                 {
@@ -131,6 +149,8 @@ namespace Desktop.View
                 label.MouseDown += FilterByCategory_Click;
                 CategoryStackPanel.Children.Add(label);
             }
+
+            System.Diagnostics.Debug.WriteLine($"CategoryColors count: {_taskRepository.CategoryColors.Count}");
         }
 
         private void OpenWithFadeIn()
@@ -157,7 +177,7 @@ namespace Desktop.View
                     await _taskRepository.AddTask(newTask);
                     FilteredTaskList.Add(newTask);
                     UpdateCategoryLabels();
-                    ShowMainContent();
+                    UpdateMainContentVisibility();
                 }
             }
         }
@@ -247,6 +267,7 @@ namespace Desktop.View
                 MessageBox.Show($"Задача \"{SelectedTask.Name}\" выполнена!");
                 FilteredTaskList.Remove(SelectedTask);
                 SelectedTask = null;
+                UpdateMainContentVisibility();
             }
         }
 
@@ -280,15 +301,16 @@ namespace Desktop.View
             }
         }
 
-        private void DeleteButtonClick(object sender, RoutedEventArgs e)
+        private async void DeleteButtonClick(object sender, RoutedEventArgs e)
         {
             if (SelectedTask != null)
             {
                 MessageBox.Show($"Задача \"{SelectedTask.Name}\" удалена!");
-                _taskRepository.RemoveTask(SelectedTask);
+                await _taskRepository.RemoveTask(SelectedTask);
                 FilteredTaskList.Remove(SelectedTask);
                 SelectedTask = null;
                 UpdateCategoryLabels();
+                UpdateMainContentVisibility();
             }
         }
 
@@ -305,6 +327,7 @@ namespace Desktop.View
                     await _taskRepository.AddTask(newTask);
                     FilteredTaskList.Add(newTask);
                     UpdateCategoryLabels();
+                    UpdateMainContentVisibility();
                 }
             }
         }
@@ -356,7 +379,7 @@ namespace Desktop.View
         {
             if (Application.Current.MainWindow != null)
             {
-                Application.Current.MainWindow.Close(); 
+                Application.Current.MainWindow.Close();
             }
             var process = new Process
             {
@@ -366,8 +389,8 @@ namespace Desktop.View
                     UseShellExecute = true
                 }
             };
-            process.Start(); 
-            Application.Current.Shutdown(); 
+            process.Start();
+            Application.Current.Shutdown();
         }
 
         private void ProfileImageSwitchEmpty_Click(object sender, RoutedEventArgs e)
@@ -432,7 +455,7 @@ namespace Desktop.View
         {
             if (Application.Current.MainWindow != null)
             {
-                Application.Current.MainWindow.Close(); 
+                Application.Current.MainWindow.Close();
             }
             var process = new Process
             {
@@ -442,8 +465,8 @@ namespace Desktop.View
                     UseShellExecute = true
                 }
             };
-            process.Start(); 
-            Application.Current.Shutdown(); 
+            process.Start();
+            Application.Current.Shutdown();
         }
 
         private void ProfileImageSwitchMain_Click(object sender, RoutedEventArgs e)

@@ -48,12 +48,12 @@ namespace Desktop.Utiles
         public TaskItem(string name, long timestamp, string category, string description = "")
         {
             Name = name;
-            Date = DateTimeOffset.FromUnixTimeMilliseconds(timestamp).DateTime.ToLocalTime(); // Преобразование таймстампа в DateTime
+            Date = DateTimeOffset.FromUnixTimeMilliseconds(timestamp).DateTime.ToLocalTime();
             Category = category;
             Description = description;
         }
 
-        public TaskItem(string name, DateTime date, string category, string description = "") // Для совместимости
+        public TaskItem(string name, DateTime date, string category, string description = "") 
         {
             Name = name;
             Date = date;

@@ -50,6 +50,8 @@ namespace Desktop.Repository
             try
             {
                 var todos = await _todoApiClient.GetTodosAsync();
+                _taskList.Clear(); 
+                _completedTasks.Clear();
                 foreach (var todo in todos)
                 {
                     var taskItem = new TaskItem(todo.Title, todo.date, todo.Category, todo.Description)
@@ -69,6 +71,7 @@ namespace Desktop.Repository
                         _categoryColors[taskItem.Category] = GetRandomColor();
                     }
                 }
+                System.Diagnostics.Debug.WriteLine($"Initialized with {todos.Length} tasks, CategoryColors count: {_categoryColors.Count}");
             }
             catch (HttpRequestException ex)
             {
@@ -97,6 +100,7 @@ namespace Desktop.Repository
                 {
                     _categoryColors[newTask.Category] = GetRandomColor();
                 }
+                System.Diagnostics.Debug.WriteLine($"Added task, CategoryColors count: {_categoryColors.Count}");
             }
             catch (HttpRequestException ex)
             {
@@ -104,12 +108,25 @@ namespace Desktop.Repository
             }
         }
 
-        public void RemoveTask(TaskItem task)
+        public async Task RemoveTask(TaskItem task)
         {
-            _taskList.Remove(task);
-            if (!_taskList.Any(t => t.Category == task.Category) && !_completedTasks.Any(t => t.Category == task.Category))
+            try
             {
-                _categoryColors.Remove(task.Category);
+                var todo = (await _todoApiClient.GetTodosAsync()).FirstOrDefault(t => t.Title == task.Name && t.Category == task.Category && t.date == new DateTimeOffset(task.Date).ToUnixTimeMilliseconds());
+                if (todo != null)
+                {
+                    await _todoApiClient.DeleteTodoAsync(todo.Id);
+                    _taskList.Remove(task);
+                    if (!_taskList.Any(t => t.Category == task.Category) && !_completedTasks.Any(t => t.Category == task.Category))
+                    {
+                        _categoryColors.Remove(task.Category);
+                    }
+                    System.Diagnostics.Debug.WriteLine($"Removed task, CategoryColors count: {_categoryColors.Count}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка удаления задачи", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -120,6 +137,7 @@ namespace Desktop.Repository
                 _taskList.Remove(task);
                 _completedTasks.Add(task);
             }
+            System.Diagnostics.Debug.WriteLine($"Completed task, CategoryColors count: {_categoryColors.Count}");
         }
 
         public ObservableCollection<TaskItem> GetTasksByCategory(string category)
