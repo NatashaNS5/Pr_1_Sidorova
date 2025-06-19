@@ -13,7 +13,7 @@ namespace Desktop.model
         public string Category { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public DateTime date { get; set; }
+        public long date { get; set; } 
         public bool IsCompleted { get; set; }
         public CoordinateData Coordinate { get; set; }
 
@@ -25,7 +25,7 @@ namespace Desktop.model
                 Category = model.category,
                 Title = model.title,
                 Description = model.description,
-                date = model.date,
+                date = model.date.Ticks, 
                 IsCompleted = model.isCompleted,
             };
         }

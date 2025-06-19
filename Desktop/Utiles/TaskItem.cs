@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Desktop.Utiles
 {
@@ -49,7 +45,15 @@ namespace Desktop.Utiles
 
         public string FormattedDate => Date.ToString("f", new CultureInfo("ru-RU"));
 
-        public TaskItem(string name, DateTime date, string category, string description = "")
+        public TaskItem(string name, long timestamp, string category, string description = "")
+        {
+            Name = name;
+            Date = DateTimeOffset.FromUnixTimeMilliseconds(timestamp).DateTime.ToLocalTime(); // Преобразование таймстампа в DateTime
+            Category = category;
+            Description = description;
+        }
+
+        public TaskItem(string name, DateTime date, string category, string description = "") // Для совместимости
         {
             Name = name;
             Date = date;

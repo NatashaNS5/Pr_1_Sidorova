@@ -1,8 +1,11 @@
-﻿using Desktop.Utiles;
-using Desktop.View;
+﻿using Desktop.Repository;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,7 +16,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
+using System.Diagnostics;
+using Desktop.Utiles;
 
 namespace Desktop
 {
@@ -49,7 +56,7 @@ namespace Desktop
                     return;
                 }
 
-                var taskDateTime = new DateTime(date.Year, date.Month, date.Day, time.Hours, time.Minutes, 0);
+                var taskDateTime = new DateTime(date.Year, date.Month, date.Day, time.Hours, time.Minutes, 0, DateTimeKind.Utc);
                 var category = CategoryTextBox.Text.Trim();
 
                 NewTask = new TaskItem(NameTextBox.Text, taskDateTime, category)

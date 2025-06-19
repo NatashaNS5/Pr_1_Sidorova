@@ -70,7 +70,7 @@ namespace Desktop.View
         {
             InitializeComponent();
             DataContext = this;
-            Loaded += (s, e) => OpenWithFadeIn();
+            Loaded += async (s, e) => await InitializePage();
             _taskRepository = new TaskRepository();
             FilteredTaskList = new ObservableCollection<TaskItem>();
             _isMenuVisible = false;
@@ -88,6 +88,13 @@ namespace Desktop.View
             }
 
             UpdateCategoryLabels();
+        }
+
+        private async Task InitializePage()
+        {
+            await _taskRepository.InitializeAsync();
+            OpenWithFadeIn();
+            ShowAllTasks_Click(null, null);
         }
 
         private void UpdateCategoryLabels()
@@ -137,7 +144,7 @@ namespace Desktop.View
             BeginAnimation(UIElement.OpacityProperty, fadeInAnimation);
         }
 
-        private void CreateFirstTaskButton_Click(object sender, RoutedEventArgs e)
+        private async void CreateFirstTaskButton_Click(object sender, RoutedEventArgs e)
         {
             var addTaskWindow = new AddTaskWindow();
             AnimateWindow(addTaskWindow);
@@ -147,7 +154,7 @@ namespace Desktop.View
                 var newTask = addTaskWindow.NewTask;
                 if (newTask != null)
                 {
-                    _taskRepository.AddTask(newTask);
+                    await _taskRepository.AddTask(newTask);
                     FilteredTaskList.Add(newTask);
                     UpdateCategoryLabels();
                     ShowMainContent();
@@ -210,7 +217,7 @@ namespace Desktop.View
 
                 MainScaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleInAnimationX);
                 MainScaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleInAnimationY);
-                MainGrid.BeginAnimation(UIElement.OpacityProperty, fadeInAnimation);
+                MainGrid.BeginAnimation(OpacityProperty, fadeInAnimation);
 
                 ShowAllTasks_Click(null, null);
             };
@@ -285,7 +292,7 @@ namespace Desktop.View
             }
         }
 
-        private void AddTaskButton_Click(object sender, RoutedEventArgs e)
+        private async void AddTaskButton_Click(object sender, RoutedEventArgs e)
         {
             var addTaskWindow = new AddTaskWindow();
             AnimateWindow(addTaskWindow);
@@ -295,7 +302,7 @@ namespace Desktop.View
                 var newTask = addTaskWindow.NewTask;
                 if (newTask != null)
                 {
-                    _taskRepository.AddTask(newTask);
+                    await _taskRepository.AddTask(newTask);
                     FilteredTaskList.Add(newTask);
                     UpdateCategoryLabels();
                 }

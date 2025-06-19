@@ -1,11 +1,14 @@
-﻿using Desktop.Utiles;
+﻿using Desktop.model;
+using Desktop.Utiles;
 using Desktop.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 
 namespace Desktop.Repository
@@ -15,6 +18,7 @@ namespace Desktop.Repository
         private ObservableCollection<TaskItem> _taskList;
         private ObservableCollection<TaskItem> _completedTasks;
         private Dictionary<string, SolidColorBrush> _categoryColors;
+        private readonly TodoApiClient _todoApiClient;
 
         public ObservableCollection<TaskItem> TaskList
         {
@@ -38,14 +42,65 @@ namespace Desktop.Repository
             _taskList = new ObservableCollection<TaskItem>();
             _completedTasks = new ObservableCollection<TaskItem>();
             _categoryColors = new Dictionary<string, SolidColorBrush>();
+            _todoApiClient = new TodoApiClient();
         }
 
-        public void AddTask(TaskItem task)
+        public async Task InitializeAsync()
         {
-            _taskList.Add(task);
-            if (!_categoryColors.ContainsKey(task.Category))
+            try
             {
-                _categoryColors[task.Category] = GetRandomColor();
+                var todos = await _todoApiClient.GetTodosAsync();
+                foreach (var todo in todos)
+                {
+                    var taskItem = new TaskItem(todo.Title, todo.date, todo.Category, todo.Description)
+                    {
+                        IsCompleted = todo.IsCompleted
+                    };
+                    if (todo.IsCompleted)
+                    {
+                        _completedTasks.Add(taskItem);
+                    }
+                    else
+                    {
+                        _taskList.Add(taskItem);
+                    }
+                    if (!_categoryColors.ContainsKey(taskItem.Category))
+                    {
+                        _categoryColors[taskItem.Category] = GetRandomColor();
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка загрузки задач", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        public async Task AddTask(TaskItem task)
+        {
+            try
+            {
+                var todoModel = await _todoApiClient.CreateTodoAsync(task.Name, task.Description, task.Category, task.Date, task.IsCompleted);
+                var newTask = new TaskItem(todoModel.Title, todoModel.date, todoModel.Category, todoModel.Description)
+                {
+                    IsCompleted = todoModel.IsCompleted
+                };
+                if (todoModel.IsCompleted)
+                {
+                    _completedTasks.Add(newTask);
+                }
+                else
+                {
+                    _taskList.Add(newTask);
+                }
+                if (!_categoryColors.ContainsKey(newTask.Category))
+                {
+                    _categoryColors[newTask.Category] = GetRandomColor();
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка API", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -75,6 +130,11 @@ namespace Desktop.Repository
         public ObservableCollection<TaskItem> GetAllTasks()
         {
             return new ObservableCollection<TaskItem>(_taskList);
+        }
+
+        public ObservableCollection<TaskItem> CompletedTasksList()
+        {
+            return new ObservableCollection<TaskItem>(_completedTasks);
         }
 
         private SolidColorBrush GetRandomColor()
