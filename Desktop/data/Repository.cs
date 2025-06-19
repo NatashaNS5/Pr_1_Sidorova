@@ -4,7 +4,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 using Desktop.model;
 using Newtonsoft.Json;
@@ -16,6 +15,7 @@ namespace Desktop.data
     {
         private readonly HttpClient _httpClient;
         private readonly string TodosUrl = "api/todos";
+        private readonly DatabaseConnection _dbConnection = new DatabaseConnection();
 
         public Repository()
         {
@@ -32,7 +32,7 @@ namespace Desktop.data
         public class AuthRepository : TodoHttpClient
         {
             private readonly HttpClient _httpClient;
-            private readonly string _connectionString = "Server=DESKTOP-KEHORP4;Database=TodoAppDB;Trusted_Connection=True;";
+            private readonly DatabaseConnection _dbConnection = new DatabaseConnection();
 
             public AuthRepository()
             {
@@ -60,7 +60,6 @@ namespace Desktop.data
                 try
                 {
                     var user = new { Email = email, Password = password };
-
                     var response = await _httpClient.PostAsJsonAsync("api/auth/login", user);
                     response.EnsureSuccessStatusCode();
 
@@ -72,14 +71,10 @@ namespace Desktop.data
                         {
                             TokenStorage.Value = tokenResponse.Data.AccessToken;
                             TokenStorage.Username = email;
-
-                            await SaveTokenToDatabase(email, TokenStorage.Value);
+                            await SaveTokenToDatabase(email, TokenStorage.Value, false);
                             return (true, null);
                         }
-                        else
-                        {
-                            return (false, "Не удалось десериализовать токен из ответа.");
-                        }
+                        return (false, "Не удалось десериализовать токен из ответа.");
                     }
                     else
                     {
@@ -101,58 +96,69 @@ namespace Desktop.data
                 }
             }
 
-            private async Task SaveTokenToDatabase(string email, string token)
+            public async Task SetLoggedOutAsync(string email)
             {
-                try
+                using (var connection = await _dbConnection.GetConnectionAsync())
                 {
-                    using (var connection = new SqlConnection(_connectionString))
+                    try
                     {
-                        await connection.OpenAsync();
+                        var command = new SqlCommand(
+                            "UPDATE UserTokens SET IsLoggedOut = @IsLoggedOut WHERE Email = @Email",
+                            connection);
+                        command.Parameters.AddWithValue("@Email", email ?? (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@IsLoggedOut", true);
+                        await command.ExecuteNonQueryAsync();
+                    }
+                    finally
+                    {
+                        _dbConnection.CloseConnection(connection);
+                    }
+                }
+            }
+
+            private async Task SaveTokenToDatabase(string email, string token, bool isLoggedOut)
+            {
+                using (var connection = await _dbConnection.GetConnectionAsync())
+                {
+                    try
+                    {
                         var command = new SqlCommand(
                             @"MERGE UserTokens AS target
                               USING (SELECT @Email AS Email) AS source
                               ON (target.Email = source.Email)
                               WHEN MATCHED THEN
-                                  UPDATE SET AccessToken = @AccessToken, LastUsed = @LastUsed
+                                  UPDATE SET AccessToken = @AccessToken, LastUsed = @LastUsed, IsLoggedOut = @IsLoggedOut
                               WHEN NOT MATCHED THEN
-                                  INSERT (Email, AccessToken, LastUsed)
-                                  VALUES (@Email, @AccessToken, @LastUsed);", connection);
+                                  INSERT (Email, AccessToken, LastUsed, IsLoggedOut)
+                                  VALUES (@Email, @AccessToken, @LastUsed, @IsLoggedOut);", connection);
                         command.Parameters.AddWithValue("@Email", email);
                         command.Parameters.AddWithValue("@AccessToken", token);
                         command.Parameters.AddWithValue("@LastUsed", DateTime.Now);
+                        command.Parameters.AddWithValue("@IsLoggedOut", isLoggedOut);
                         await command.ExecuteNonQueryAsync();
                     }
-                }
-                catch (SqlException)
-                {
-                    throw;
-                }
-                catch (Exception)
-                {
-                    throw;
+                    finally
+                    {
+                        _dbConnection.CloseConnection(connection);
+                    }
                 }
             }
 
             public async Task<string> LoadTokenFromDatabase(string email)
             {
-                try
+                using (var connection = await _dbConnection.GetConnectionAsync())
                 {
-                    using (var connection = new SqlConnection(_connectionString))
+                    try
                     {
-                        await connection.OpenAsync();
                         var command = new SqlCommand("SELECT AccessToken FROM UserTokens WHERE Email = @Email", connection);
                         command.Parameters.AddWithValue("@Email", email);
                         var result = await command.ExecuteScalarAsync();
                         return result as string;
                     }
-                }
-                catch (SqlException)
-                {
-                    return null;
-                }
-                catch (Exception)
-                {
-                    return null;
+                    finally
+                    {
+                        _dbConnection.CloseConnection(connection);
+                    }
                 }
             }
         }
