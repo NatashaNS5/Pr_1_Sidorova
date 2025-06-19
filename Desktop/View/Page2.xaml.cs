@@ -19,6 +19,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using System.Diagnostics;
+using Desktop.Utiles;
 
 namespace Desktop.View
 {
@@ -33,7 +35,6 @@ namespace Desktop.View
         private TaskRepository _taskRepository;
         private bool _isShowingCompletedTasks;
         private bool _isMenuVisible;
-        private Window _parentWindow; 
 
         public string Username
         {
@@ -65,7 +66,7 @@ namespace Desktop.View
             set { _isShowingCompletedTasks = value; OnPropertyChanged(); }
         }
 
-        public Page2(Window parentWindow = null)
+        public Page2()
         {
             InitializeComponent();
             DataContext = this;
@@ -73,7 +74,6 @@ namespace Desktop.View
             _taskRepository = new TaskRepository();
             FilteredTaskList = new ObservableCollection<TaskItem>();
             _isMenuVisible = false;
-            _parentWindow = parentWindow; 
 
             System.Diagnostics.Debug.WriteLine($"Page2 constructor - UserRepository.CurrentUser: {UserRepository.CurrentUser?.Username ?? "null"}");
             if (UserRepository.CurrentUser != null)
@@ -347,19 +347,20 @@ namespace Desktop.View
 
         private void ExitBEmpty_Click(object sender, RoutedEventArgs e)
         {
-            if (_parentWindow != null)
+            if (Application.Current.MainWindow != null)
             {
-                _parentWindow.Close(); 
+                Application.Current.MainWindow.Close(); 
             }
-            else
+            var process = new Process
             {
-                if (Application.Current.MainWindow != null)
+                StartInfo = new ProcessStartInfo
                 {
-                    Application.Current.MainWindow.Close();
+                    FileName = Process.GetCurrentProcess().MainModule.FileName,
+                    UseShellExecute = true
                 }
-            }
-            var mainWindow = new MainWindow();
-            mainWindow.Show();
+            };
+            process.Start(); 
+            Application.Current.Shutdown(); 
         }
 
         private void ProfileImageSwitchEmpty_Click(object sender, RoutedEventArgs e)
@@ -422,19 +423,20 @@ namespace Desktop.View
 
         private void ExitBMain_Click(object sender, RoutedEventArgs e)
         {
-            if (_parentWindow != null)
+            if (Application.Current.MainWindow != null)
             {
-                _parentWindow.Close(); 
+                Application.Current.MainWindow.Close(); 
             }
-            else
+            var process = new Process
             {
-                if (Application.Current.MainWindow != null)
+                StartInfo = new ProcessStartInfo
                 {
-                    Application.Current.MainWindow.Close();
+                    FileName = Process.GetCurrentProcess().MainModule.FileName,
+                    UseShellExecute = true
                 }
-            }
-            var mainWindow = new MainWindow();
-            mainWindow.Show(); 
+            };
+            process.Start(); 
+            Application.Current.Shutdown(); 
         }
 
         private void ProfileImageSwitchMain_Click(object sender, RoutedEventArgs e)
@@ -456,96 +458,6 @@ namespace Desktop.View
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class TaskItem : INotifyPropertyChanged
-    {
-        private string _name;
-        private DateTime _date;
-        private string _category;
-        private string _description;
-        private bool _isCompleted;
-
-        public string Name
-        {
-            get => _name;
-            set { _name = value; OnPropertyChanged(); }
-        }
-
-        public DateTime Date
-        {
-            get => _date;
-            set { _date = value; OnPropertyChanged(); }
-        }
-
-        public string Category
-        {
-            get => _category;
-            set { _category = value; OnPropertyChanged(); }
-        }
-
-        public string Description
-        {
-            get => _description;
-            set { _description = value; OnPropertyChanged(); }
-        }
-
-        public bool IsCompleted
-        {
-            get => _isCompleted;
-            set { _isCompleted = value; OnPropertyChanged(); }
-        }
-
-        public string FormattedDate => Date.ToString("f", new CultureInfo("ru-RU"));
-
-        public TaskItem(string name, DateTime date, string category, string description = "")
-        {
-            Name = name;
-            Date = date;
-            Category = category;
-            Description = description;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class BoolToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is bool boolValue)
-            {
-                return boolValue ? Visibility.Collapsed : Visibility.Visible;
-            }
-            return Visibility.Visible;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class BoolToTextDecorationConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is bool boolValue && boolValue)
-            {
-                return TextDecorations.Strikethrough;
-            }
-            return null;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 }
