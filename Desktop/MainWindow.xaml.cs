@@ -1,4 +1,5 @@
-﻿using Desktop.Repository;
+﻿using Desktop.model;
+using Desktop.Repository;
 using Desktop.Utiles;
 using Desktop.View;
 using System;
@@ -24,12 +25,35 @@ namespace Desktop
     public partial class MainWindow : Window
     {
         private readonly AuthRepository _authRepository;
+
         public MainWindow()
         {
             InitializeComponent();
             _authRepository = new AuthRepository();
             OpenWithFadeIn();
             InitializeButtonAnimations();
+            CheckSavedTokenAndNavigate();
+        }
+
+        private async void CheckSavedTokenAndNavigate()
+        {
+            if (!string.IsNullOrEmpty(TokenStorage.Username) && string.IsNullOrEmpty(TokenStorage.Value))
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(TokenStorage.Username))
+            {
+                var savedToken = await _authRepository.LoadTokenFromDatabase(TokenStorage.Username);
+                if (!string.IsNullOrEmpty(savedToken) && savedToken == TokenStorage.Value)
+                {
+                    TransitionToPage2();
+                    return;
+                }
+            }
+
+            TokenStorage.Value = null;
+            TokenStorage.Username = null;
         }
 
         private void OpenWithFadeIn()
@@ -107,7 +131,6 @@ namespace Desktop
                 MessageBox.Show($"Произошла ошибка: {ex.Message}");
             }
         }
-
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {

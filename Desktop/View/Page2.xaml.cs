@@ -1,4 +1,5 @@
-﻿using Desktop.Repository;
+﻿using Desktop.model;
+using Desktop.Repository;
 using Desktop.Utiles;
 using Microsoft.Win32;
 using System;
@@ -414,6 +415,9 @@ namespace Desktop.View
 
         private void ExitBEmpty_Click(object sender, RoutedEventArgs e)
         {
+            TokenStorage.Value = null;
+            TokenStorage.Username = null;
+
             if (Application.Current.MainWindow != null)
             {
                 Application.Current.MainWindow.Close();
@@ -498,6 +502,9 @@ namespace Desktop.View
 
         private void ExitBMain_Click(object sender, RoutedEventArgs e)
         {
+            TokenStorage.Value = null;
+            TokenStorage.Username = null;
+
             if (Application.Current.MainWindow != null)
             {
                 Application.Current.MainWindow.Close();
