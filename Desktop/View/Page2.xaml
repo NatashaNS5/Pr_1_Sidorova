@@ -39,8 +39,8 @@
                 </Grid>
             </Grid>
             <Label Content="Добро пожаловать!" Style="{StaticResource HeaderLabelStyle}" Margin="-210,-330,53,55" HorizontalAlignment="Center" VerticalAlignment="Center" />
-            <Label Content="Создайте свою первую
-задачу!" Style="{StaticResource HeaderLabelStyle}" Margin="-190,-200,30,55" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Label Content="Создайте свою первую" Style="{StaticResource HeaderLabelStyle}" Margin="126,138,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Label Content="задачу!" Style="{StaticResource HeaderLabelStyle}" Margin="127,177,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <Button Content="Создайте первую задачу!" Style="{StaticResource ButtonStyle}" Click="CreateFirstTaskButton_Click">
                 <Button.Resources>
                     <Style TargetType="{x:Type Border}">
