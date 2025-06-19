@@ -1,32 +1,24 @@
 ﻿using Desktop.Repository;
+using Desktop.Utiles;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Microsoft.Win32;
-using System.Diagnostics;
-using Desktop.Utiles;
 
 namespace Desktop.View
 {
-    /// <summary>
-    /// Логика взаимодействия для Page2.xaml
-    /// </summary>
     public partial class Page2 : Page, INotifyPropertyChanged
     {
         private string _username;
@@ -35,6 +27,7 @@ namespace Desktop.View
         private TaskRepository _taskRepository;
         private bool _isShowingCompletedTasks;
         private bool _isMenuVisible;
+        private readonly UserRepository _userRepository;
 
         public string Username
         {
@@ -70,24 +63,15 @@ namespace Desktop.View
         {
             InitializeComponent();
             DataContext = this;
-            Loaded += async (s, e) => await InitializePage();
             _taskRepository = new TaskRepository();
+            _userRepository = new UserRepository();
             FilteredTaskList = new ObservableCollection<TaskItem>();
             _isMenuVisible = false;
 
-            System.Diagnostics.Debug.WriteLine($"Page2 constructor - UserRepository.CurrentUser: {UserRepository.CurrentUser?.Username ?? "null"}");
-            if (UserRepository.CurrentUser != null)
-            {
-                Username = UserRepository.CurrentUser.Username;
-                System.Diagnostics.Debug.WriteLine($"Username set to: {Username}");
-            }
-            else
-            {
-                Username = "Username";
-                System.Diagnostics.Debug.WriteLine("No CurrentUser, using default Username: Username");
-            }
+            Loaded += async (s, e) => await InitializePage();
 
-            UpdateCategoryLabels();
+            System.Diagnostics.Debug.WriteLine($"Page2 constructor - UserRepository.CurrentUser: {UserRepository.CurrentUser?.Name ?? "null"}");
+            Username = UserRepository.CurrentUser?.Name ?? "Username";
         }
 
         private async Task InitializePage()
@@ -96,7 +80,52 @@ namespace Desktop.View
             UpdateMainContentVisibility();
             UpdateCategoryLabels();
             OpenWithFadeIn();
+
+            await LoadUserInfo();
+            await LoadProfilePhoto();
+
             ShowAllTasks_Click(null, null);
+        }
+
+        private async Task LoadUserInfo()
+        {
+            var user = await _userRepository.GetUserInfo();
+            Username = user?.Name ?? "Username";
+            System.Diagnostics.Debug.WriteLine($"User info loaded: {Username}");
+        }
+
+        private async Task LoadProfilePhoto()
+        {
+            if (UserRepository.CurrentUser?.ImageId != null)
+            {
+                var photoBytes = await _userRepository.GetUserPhoto(UserRepository.CurrentUser.ImageId);
+                if (photoBytes != null)
+                {
+                    try
+                    {
+                        using var stream = new MemoryStream(photoBytes);
+                        var bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.StreamSource = stream;
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.EndInit();
+                        profileImageButtonEmpty.Source = bitmap;
+                        profileImageButtonMain.Source = bitmap;
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error loading profile photo: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Failed to load profile photo: No bytes received");
+                }
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("No ImageId available");
+            }
         }
 
         private void UpdateMainContentVisibility()
@@ -265,7 +294,7 @@ namespace Desktop.View
                 SelectedTask.IsCompleted = true;
                 await _taskRepository.CompleteTask(SelectedTask);
                 MessageBox.Show($"Задача \"{SelectedTask.Name}\" выполнена!");
-                FilteredTaskList.Remove(SelectedTask); 
+                FilteredTaskList.Remove(SelectedTask);
                 SelectedTask = null;
                 UpdateMainContentVisibility();
                 if (IsShowingCompletedTasks)
@@ -288,7 +317,7 @@ namespace Desktop.View
         private void ShowCompletedTasks_Click(object sender, RoutedEventArgs e)
         {
             IsShowingCompletedTasks = true;
-            FilteredTaskList = _taskRepository.CompletedTasks; 
+            FilteredTaskList = _taskRepository.CompletedTasks;
         }
 
         private void FilterByCategory_Click(object sender, RoutedEventArgs e)
@@ -401,18 +430,26 @@ namespace Desktop.View
             Application.Current.Shutdown();
         }
 
-        private void ProfileImageSwitchEmpty_Click(object sender, RoutedEventArgs e)
+        private async void ProfileImageSwitchEmpty_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new()
             {
-                Filter = "Image Files (*.png;*.jpg)| *.png;*.jpg",
+                Filter = "Image Files (*.png;*.jpg)|*.png;*.jpg",
                 Title = "Выберите изображение профиля"
             };
 
             if (openFileDialog.ShowDialog() == true)
             {
-                var bitmap = new BitmapImage(new Uri(openFileDialog.FileName));
-                profileImageButtonEmpty.Source = bitmap;
+                var (success, errorMessage) = await _userRepository.UploadUserPhoto(openFileDialog.FileName);
+                if (success)
+                {
+                    await LoadProfilePhoto();
+                    MessageBox.Show("Фото профиля успешно обновлено!");
+                }
+                else
+                {
+                    MessageBox.Show($"Ошибка при загрузке фото: {errorMessage}");
+                }
             }
         }
 
@@ -477,18 +514,26 @@ namespace Desktop.View
             Application.Current.Shutdown();
         }
 
-        private void ProfileImageSwitchMain_Click(object sender, RoutedEventArgs e)
+        private async void ProfileImageSwitchMain_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new()
             {
-                Filter = "Image Files (*.png;*.jpg)| *.png;*.jpg",
+                Filter = "Image Files (*.png;*.jpg)|*.png;*.jpg",
                 Title = "Выберите изображение профиля"
             };
 
             if (openFileDialog.ShowDialog() == true)
             {
-                var bitmap = new BitmapImage(new Uri(openFileDialog.FileName));
-                profileImageButtonMain.Source = bitmap;
+                var (success, errorMessage) = await _userRepository.UploadUserPhoto(openFileDialog.FileName);
+                if (success)
+                {
+                    await LoadProfilePhoto();
+                    MessageBox.Show("Фото профиля успешно обновлено!");
+                }
+                else
+                {
+                    MessageBox.Show($"Ошибка при загрузке фото: {errorMessage}");
+                }
             }
         }
 
